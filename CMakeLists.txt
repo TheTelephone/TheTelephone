@@ -30,11 +30,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/)
 
 #Dependencies
 INCLUDE (CheckLibraryExists)
-set(CMAKE_REQUIRED_LIBRARIES sndfile)
+set(CMAKE_REQUIRED_LIBRARIES m fftw3 sndfile)
+CHECK_LIBRARY_EXISTS(fftw3 fftw_execute "" HAVE_FFTW)
 CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
 
 #Source folders
 add_subdirectory(src/support)
+
+include_directories(src/include)
+
 
 #PD-External: basics
 add_library(audiorouting~ SHARED src/support/audiorouting_tilde.c)
@@ -50,6 +54,14 @@ else()
 
   add_library(writesfnow~ SHARED src/support/writesfnow_tilde.c)
   target_link_libraries(writesfnow~ sndfile)
+endif()
+
+#PD-Externals convolution
+if(NOT HAVE_FFTW AND NOT HAVE_SNDFILE)
+	message(WARNING "libfftw3 or libsndfile not found: convolve_dynamic~ will not be build.")
+else()
+	add_library(convolve_dynamic~ SHARED src/signal-processing/convolve_dynamic_tilde.c)
+	target_link_libraries(convolve_dynamic~ resample m fftw3 sndfile)
 endif()
 
 #Installation

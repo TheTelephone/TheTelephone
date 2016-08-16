@@ -1,0 +1,23 @@
+#N canvas 162 245 992 400 12;
+#X floatatom 130 181 5 0 0 0 - - -, f 5;
+#X obj 130 157 hradio 15 1 0 3 empty empty empty 0 -8 0 10 -262144
+-1 -1 1;
+#X obj 46 270 dac~;
+#X text 308 180 Arguments:;
+#X text 306 117 Input:;
+#X obj 46 118 osc~ 800;
+#X text 306 151 - float inlet: set active inlet by index;
+#X text 39 4 convolve_dynamic~ - Dynamic convolver;
+#X obj 46 227 convolve_dynamic~ IR.wav, f 25;
+#X text 305 198 1: path to the impulse response file (multi-channel
+wave).;
+#X text 307 133 - signal inlet;
+#X text 40 33 Convolves the audio signal using a provided impulse response.
+Impulse responses are loaded from a (multi-channel) wave file. Impulse
+responses can be switched by sending a float to the first inlet. This
+float must correspond to the number in the wave file. representing
+the channel. Crossfading is applied using cos^2., f 67;
+#X connect 1 0 0 0;
+#X connect 1 0 8 0;
+#X connect 5 0 8 0;
+#X connect 8 0 2 0;
