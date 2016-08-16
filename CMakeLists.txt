@@ -50,7 +50,7 @@ if (NOT HAVE_SNDFILE)
   message(FATAL_ERROR "libsndfile not found." )
 else()
   add_library(readsfnow~ SHARED src/support/readsfnow_tilde.c)
-  target_link_libraries(readsfnow~ sndfile resample)
+  target_link_libraries(readsfnow~ sndfile)
 
   add_library(writesfnow~ SHARED src/support/writesfnow_tilde.c)
   target_link_libraries(writesfnow~ sndfile)

@@ -19,8 +19,9 @@ Build procedure
 ---
 ### Install dependencies
 
+For [Ubuntu 16.04](http://releases.ubuntu.com/16.04/):
 ```bash
-sudo apt install puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsocket-dev libopus-dev libgsm1-dev libspeexdsp-dev
+sudo apt install puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeexdsp-dev
 ```
 
 ### Compile
