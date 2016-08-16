@@ -1,0 +1,16 @@
+#N canvas 198 179 992 400 12;
+#X text 263 118 - 1 Filename;
+#X text 264 97 Arguments:;
+#X text 39 4 readsfnow~ - Reads audio data from a wave file synchronously.
+, f 61;
+#X obj 44 184 dac~;
+#X msg 43 99 rewind;
+#X obj 192 184 print;
+#X obj 43 139 readsfnow~ TEST.wav;
+#X text 39 30 File is completely read on object creation into memory.
+Thus no harddrive interaction is required while DSP. Provides one signal
+outlet per channel. The last outlet bangs on EOF., f 67;
+#X connect 4 0 6 0;
+#X connect 6 0 3 0;
+#X connect 6 0 3 1;
+#X connect 6 1 5 0;

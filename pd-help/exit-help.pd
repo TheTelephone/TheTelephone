@@ -1,0 +1,8 @@
+#N canvas 1588 328 609 415 12;
+#X obj 13 76 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 12 4 exit - terminates PureData on bang.;
+#X obj 13 118 exit;
+#X text 10 34 ATTENTION: Errors are not reported - `pd && echo "Success"`
+will always print `Success`., f 67;
+#X connect 0 0 2 0;

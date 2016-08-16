@@ -1,0 +1,26 @@
+#N canvas 267 400 992 400 12;
+#X text 39 4 audiorouting~ - Input switcher for signal inlets.;
+#X text 40 33 Provides a variable number of inlets where only one routed
+through the outlet., f 67;
+#X floatatom 115 108 5 0 0 0 - - -, f 5;
+#X obj 115 84 hradio 15 1 0 3 empty empty empty 0 -8 0 10 -262144 -1
+-1 1;
+#X obj 43 281 dac~;
+#X text 375 182 Arguments:;
+#X text 204 77 Input:;
+#X msg 178 171 OSC400;
+#X obj 148 210 osc~ 800;
+#X msg 110 171 OSC800;
+#X obj 255 210 osc~ 400;
+#X obj 42 243 audiorouting~ OSC800 OSC400, f 40;
+#X text 203 94 - signal inlets (in this example 2);
+#X text 204 111 - float inlet: set active inlet by index;
+#X text 204 129 - message inlet: set active inlet by name;
+#X text 372 200 \$1..n: names of the inlet \; must be unique.;
+#X connect 3 0 2 0;
+#X connect 3 0 11 0;
+#X connect 7 0 11 0;
+#X connect 8 0 11 0;
+#X connect 9 0 11 0;
+#X connect 10 0 11 1;
+#X connect 11 0 4 0;

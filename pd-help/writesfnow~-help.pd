@@ -1,0 +1,10 @@
+#N canvas 232 215 992 400 12;
+#X text 39 4 writesfnow~ - Writes audio data to file (synchronous).
+;
+#X obj 45 82 writesfnow~ TEST.wav;
+#X text 251 92 - 1 Filename;
+#X text 251 108 - 2 Number of channels;
+#X text 252 71 Arguments:;
+#X text 39 30 Writes audio data into a wave file synchronously and
+thus enables offline processing. Provides one inlet for each channel.
+, f 67;
