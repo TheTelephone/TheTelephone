@@ -104,7 +104,7 @@ t_int *convolve_dynamic_tilde_perform (t_int * w) {
   } else {
     //Is actually a buffer underrun; happens only in the beginning.
     for (int i = 0; i < n; i++) {
-      *out++ = 0;
+      out[i] = 0;
     }
   }
   return (w + 5);
