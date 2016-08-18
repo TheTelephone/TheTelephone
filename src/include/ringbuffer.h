@@ -13,6 +13,84 @@ Implementation of ringbuffers.
 
 #include <stdlib.h>
 
+//PureData's t_sample
+typedef struct _t_sample_buffer {
+  t_sample *data;
+  unsigned int size;
+  unsigned int number_elements;
+  unsigned int chunk_size;
+  unsigned int start;
+  unsigned int end;
+} t_sample_buffer;
+
+static t_sample_buffer *t_sample_buffer_alloc (unsigned int size, unsigned int chunk_size) {
+  t_sample_buffer *buffer = malloc (sizeof (t_sample_buffer));
+  if (buffer == NULL) {
+    return NULL;
+  }
+
+  buffer->data = malloc (sizeof (t_sample) * size);
+  if (buffer->data == NULL) {
+    free (buffer);
+    return NULL;
+  }
+
+  buffer->size = size;
+  buffer->number_elements = 0;
+  buffer->start = 0;
+  buffer->end = 0;
+  buffer->chunk_size = chunk_size;
+  return buffer;
+}
+
+static void t_sample_buffer_free (t_sample_buffer * buffer) {
+  free (buffer->data);
+}
+
+static void t_sample_buffer_add (t_sample_buffer * buffer, t_sample element) {
+  buffer->data[buffer->end] = element;
+  buffer->end = (buffer->end + 1) % buffer->size;
+  if (buffer->end == buffer->start) {
+    buffer->start = (buffer->start + 1) % buffer->size;
+  }
+  buffer->number_elements++;
+}
+
+static void t_sample_buffer_add_chunk (t_sample_buffer * buffer, t_sample *chunk, unsigned int size) {
+  for (int i = 0; i < size; i++) {
+    t_sample_buffer_add (buffer, *(chunk + i));
+  }
+}
+
+static t_sample t_sample_buffer_get (t_sample_buffer * buffer) {
+  t_sample to_return = buffer->data[buffer->number_elements - 1];
+  buffer->number_elements--;
+  return to_return;
+}
+
+static int t_sample_buffer_has_chunk (t_sample_buffer * buffer) {
+  if (buffer->number_elements >= buffer->chunk_size) {
+    return 1;
+  }
+  return 0;
+}
+
+static void t_sample_buffer_read_chunk (t_sample_buffer * buffer, t_sample **chunk, unsigned int size, int *manual_delete) {
+  if (buffer->start > (buffer->start + size) % buffer->size) {
+    *manual_delete = 1;
+    t_sample *cpx = (t_sample *) malloc (sizeof (t_sample) * size);
+    for (int i = 0; i < size; i++) {
+      cpx[i] = buffer->data[buffer->start];
+      buffer->start = (buffer->start + 1) % buffer->size;
+      *chunk = cpx;
+    }
+  } else {
+    *chunk = &buffer->data[buffer->start];
+    buffer->start = (buffer->start + size) % buffer->size;
+  }
+  buffer->number_elements -= size;
+}
+
 //Float
 typedef struct _float_buffer {
   float *data;

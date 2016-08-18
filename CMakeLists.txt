@@ -36,6 +36,7 @@ CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
 
 #Source folders
 add_subdirectory(src/support)
+add_subdirectory(src/degradations)
 
 include_directories(src/include)
 
@@ -44,6 +45,8 @@ include_directories(src/include)
 add_library(audiorouting~ SHARED src/support/audiorouting_tilde.c)
 
 add_library(exit SHARED src/support/exit.c)
+
+add_library(delay~ SHARED src/degradations/delay_tilde.c)
 
 #PD-External: I/O
 if (NOT HAVE_SNDFILE)

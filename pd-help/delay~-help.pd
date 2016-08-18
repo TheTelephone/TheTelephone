@@ -1,0 +1,20 @@
+#N canvas 578 262 597 430 12;
+#X obj 45 231 dac~;
+#X floatatom 93 105 5 0 0 0 - - -, f 5;
+#X obj 45 89 adc~;
+#X text 192 134 Input:;
+#X obj 46 176 delay~ 500;
+#X text 40 5 delay~ - delays the input signal by a given time in ms
+;
+#X text 40 34 Stores the input signal and writes to the signal outlet
+with the given delay., f 67;
+#X text 193 64 Arguments:;
+#X text 190 82 1: initial delay in ms;
+#X text 193 153 - signal inlet;
+#X text 193 172 - float inlet: adjusts delay;
+#X text 193 194 Output:;
+#X text 194 213 - signal outlet: delayed input signal;
+#X connect 1 0 4 0;
+#X connect 2 0 4 0;
+#X connect 4 0 0 0;
+#X connect 4 0 0 1;
