@@ -79,8 +79,8 @@ typedef struct _convolve_dynamic_tilde {
   float *overlap_add;
   float *crossfading_filter;
 
-  float_buffer *in_buffer;      //Ringbuffer for incoming signals
-  float_buffer *out_buffer;     //Ringbuffer for outgoing signals
+  float_buffer *input_buffer;      //Ringbuffer for incoming signals
+  float_buffer *output_buffer;     //Ringbuffer for outgoing signals
 } t_convolve_dynamic_tilde;
 
 void convolve_dynamic_add_to_output (t_convolve_dynamic_tilde * x, t_sample * out);
@@ -93,13 +93,13 @@ t_int *convolve_dynamic_tilde_perform (t_int * w) {
   t_sample *out = (t_sample *) (w[3]);
   int n = (int) (w[4]);
 
-  float_buffer_add_chunk (x->in_buffer, in, n);
+  float_buffer_add_chunk (x->input_buffer, in, n);
 
-  if (float_buffer_has_chunk (x->in_buffer)) {
+  if (float_buffer_has_chunk (x->input_buffer)) {
     convolve_dynamic_add_to_outbuffer (x);
   }
 
-  if (float_buffer_has_chunk (x->out_buffer)) {
+  if (float_buffer_has_chunk (x->output_buffer)) {
     convolve_dynamic_add_to_output (x, out);
   } else {
     //Is actually a buffer underrun; happens only in the beginning.
@@ -139,13 +139,13 @@ void convolve_dynamic_mul (t_convolve_dynamic_tilde * x, unsigned int impulse_re
 void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
   int free_required = 0;
   float *signal_block;
-  float_buffer_read_chunk (x->in_buffer, &signal_block, x->in_buffer->chunk_size, &free_required);
+  float_buffer_read_chunk (x->input_buffer, &signal_block, x->input_buffer->chunk_size, &free_required);
 
   //FFT - prepare incoming signal (to be convolved)
-  for (int i = 0; i < x->in_buffer->chunk_size; i++) {
+  for (int i = 0; i < x->input_buffer->chunk_size; i++) {
     x->fftw_in[i] = signal_block[i];
   }
-  for (int i = x->in_buffer->chunk_size; i < x->irtf_length; i++) {
+  for (int i = x->input_buffer->chunk_size; i < x->irtf_length; i++) {
     x->fftw_in[i] = 0;
   }
   fftw_execute (x->fftw_plan);
@@ -161,7 +161,7 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
   if (next_response == x->impulse_response_current) {
     //IR not changed
     convolve_dynamic_mul (x, x->impulse_response_current);
-    for (int i = 0; i < x->in_buffer->chunk_size; i++) {
+    for (int i = 0; i < x->input_buffer->chunk_size; i++) {
       //Copy real part to output, ignore complex part
       x->overlap_add[i] += x->fftw_out[i];
     }
@@ -176,7 +176,7 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 
     //convolve with current IR and crossfade
     convolve_dynamic_mul (x, x->impulse_response_current);
-    for (int i = 0; i < x->in_buffer->chunk_size; i++) {
+    for (int i = 0; i < x->input_buffer->chunk_size; i++) {
       //Copy real part to output, ignore complex part
       x->overlap_add[i] += x->fftw_out[i] * x->crossfading_filter[i];
     }
@@ -188,7 +188,7 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 
     //convolve with next IR and crossfade
     convolve_dynamic_mul (x, next_response);
-    for (int i = 0; i < x->in_buffer->chunk_size; i++) {
+    for (int i = 0; i < x->input_buffer->chunk_size; i++) {
       //Copy real part to output, ignore complex part
       x->overlap_add[i] += x->fftw_out[i] * x->crossfading_filter[x->impulse_response_length - i - 1];
     }
@@ -196,11 +196,11 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
     x->impulse_response_current = next_response;
   }
 
-  float_buffer_add_chunk (x->out_buffer, x->overlap_add, x->in_buffer->chunk_size);
+  float_buffer_add_chunk (x->output_buffer, x->overlap_add, x->input_buffer->chunk_size);
 
   //overlap-add: save for next block
-  for (int i = 0; i < x->in_buffer->chunk_size; i++) {
-    x->overlap_add[i] = x->fftw_out[x->in_buffer->chunk_size + i];
+  for (int i = 0; i < x->input_buffer->chunk_size; i++) {
+    x->overlap_add[i] = x->fftw_out[x->input_buffer->chunk_size + i];
   }
 
   if (free_required) {
@@ -211,9 +211,9 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 void convolve_dynamic_add_to_output (t_convolve_dynamic_tilde * x, t_sample * out) {
   int free_required = 0;
   float *signal_block;
-  float_buffer_read_chunk (x->out_buffer, &signal_block, x->out_buffer->chunk_size, &free_required);
+  float_buffer_read_chunk (x->output_buffer, &signal_block, x->output_buffer->chunk_size, &free_required);
 
-  for (int i = 0; i < x->out_buffer->chunk_size; i++) {
+  for (int i = 0; i < x->output_buffer->chunk_size; i++) {
     out[i] = signal_block[i];
   }
 
@@ -264,8 +264,8 @@ void convolve_dynamic_tilde_dsp (t_convolve_dynamic_tilde * x, t_signal ** sp) {
     x->crossfading_filter[i] = cos (rad) * cos (rad);
   }
 
-  x->in_buffer = float_buffer_alloc (MAX_BUFFER, x->impulse_response_length);
-  x->out_buffer = float_buffer_alloc (MAX_BUFFER, sp[0]->s_n);
+  x->input_buffer = float_buffer_alloc (MAX_BUFFER, x->impulse_response_length);
+  x->output_buffer = float_buffer_alloc (MAX_BUFFER, sp[0]->s_n);
 
   dsp_add (convolve_dynamic_tilde_perform, 4, x, sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
   post ("convolve_dynamic~: number of impulse responses %d, impulse response length %d; sampling rate %d.", x->impulse_response_channels, x->impulse_response_length, (int) x->impulse_response_sample_rate);
@@ -290,13 +290,13 @@ void convolve_dynamic_tilde_free (t_convolve_dynamic_tilde * x) {
 }
 
 void convolve_dynamic_free_internal (t_convolve_dynamic_tilde * x) {
-  if (x->in_buffer != NULL) {
-    float_buffer_free (x->in_buffer);
-    free (x->in_buffer);
+  if (x->input_buffer != NULL) {
+    float_buffer_free (x->input_buffer);
+    free (x->input_buffer);
   }
-  if (x->out_buffer != NULL) {
-    float_buffer_free (x->out_buffer);
-    free (x->out_buffer);
+  if (x->output_buffer != NULL) {
+    float_buffer_free (x->output_buffer);
+    free (x->output_buffer);
   }
 }
 
@@ -339,8 +339,8 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
 
   x->outlet = outlet_new (&x->x_obj, &s_signal);
 
-  x->in_buffer = NULL;
-  x->out_buffer = NULL;
+  x->input_buffer = NULL;
+  x->output_buffer = NULL;
 
   post ("convolve_dynamic~: Opened %s with channels: %d, samplerate: %d, frames %d.", infilename, x->impulse_response_channels, x->impulse_response_sample_rate, x->impulse_response_length);
   return (void *) x;
