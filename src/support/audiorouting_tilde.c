@@ -53,7 +53,7 @@ typedef struct _audiorouting_tilde {
 
   t_int inlet_next_id;          //Used to apply crossfading filter for transition.
 
-  float *crossfading_filter;
+  t_sample *crossfading_filter;
 
   t_int inlet_count;            //The total number of inlets
 
@@ -129,9 +129,9 @@ void audiorouting_tilde_dsp (t_audiorouting_tilde * x, t_signal ** sp) {
   signal_ref[2 + x->inlet_count] = (t_int) sp[x->inlet_count]->s_vec;
 
   //Initialize crossfading filter: cos^2 from 0deg to 90deg
-  x->crossfading_filter = (float *) malloc (sizeof (float) * sp[0]->s_n);
+  x->crossfading_filter = (t_sample *) malloc (sizeof (t_sample) * sp[0]->s_n);
   for (int i = 0; i < sp[0]->s_n; i++) {
-    float rad = (float) i / sp[0]->s_n * 90 * M_PI / 180;       //90deg to rad
+    t_sample rad = (t_sample) i / sp[0]->s_n * 90 * M_PI / 180;       //90deg to rad
     x->crossfading_filter[i] = cos (rad) * cos (rad);
   }
 
