@@ -1,6 +1,5 @@
 /**
-/**
-@file convolve_dynamic_tilde.c
+@file delay.c
 @author Frank Haase, Dennis Guse
 @date 2016-08-16
 @license GPLv3 or later
@@ -22,8 +21,7 @@ Outlets:
 Internal Signal flow:
   inlet -> input_buffer -> output_buffer -> outlet
 
-
- */
+*/
 
 #include <m_pd.h>
 #include "ringbuffer.h"
