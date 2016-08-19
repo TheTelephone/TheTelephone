@@ -30,13 +30,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/)
 
 #Dependencies
 INCLUDE (CheckLibraryExists)
-set(CMAKE_REQUIRED_LIBRARIES m fftw3 sndfile)
+set(CMAKE_REQUIRED_LIBRARIES fftw3 json m sndfile websockets)
 CHECK_LIBRARY_EXISTS(fftw3 fftw_execute "" HAVE_FFTW)
 CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
+CHECK_LIBRARY_EXISTS(json json_tokener_parse "" HAVE_JSON)
+CHECK_LIBRARY_EXISTS(websockets lws_client_connect "" HAVE_WEBSOCKETS)
 
 #Source folders
 add_subdirectory(src/support)
 add_subdirectory(src/degradations)
+add_subdirectory(src/connectivity)
 
 include_directories(src/include)
 
@@ -59,12 +62,20 @@ else()
   target_link_libraries(writesfnow~ sndfile)
 endif()
 
-#PD-Externals convolution
+#PD-External: convolution
 if(NOT HAVE_FFTW AND NOT HAVE_SNDFILE)
 	message(WARNING "libfftw3 or libsndfile not found: convolve_dynamic~ will not be build.")
 else()
 	add_library(convolve_dynamic~ SHARED src/signal-processing/convolve_dynamic_tilde.c)
 	target_link_libraries(convolve_dynamic~ resample m fftw3 sndfile)
+endif()
+
+#PD-External: connectivity
+if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS)
+	message(WARNING "libjson or libwebsockets not found: websocket_recv will not be build.")
+else()
+	add_library(websocket_recv SHARED src/connectivity/websocket_recv.c)
+	target_link_libraries(websocket_recv websockets json)
 endif()
 
 #Installation
