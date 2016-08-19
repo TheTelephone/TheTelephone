@@ -51,6 +51,11 @@ add_library(exit SHARED src/support/exit.c)
 
 add_library(delay~ SHARED src/degradations/delay_tilde.c)
 
+#PD-External: external with CPP
+add_library(cpp_example~ SHARED src/programming/cpp_example_tilde.cpp)
+set_target_properties(cpp_example~ PROPERTIES PREFIX "")
+set_target_properties(cpp_example~ PROPERTIES SUFFIX ".pd_linux")
+
 #PD-External: I/O
 if (NOT HAVE_SNDFILE)
   message(FATAL_ERROR "libsndfile not found." )
