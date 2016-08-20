@@ -56,5 +56,4 @@ extern "C" void cpp_example_tilde_setup (void) {
   cpp_example_tilde_class = class_new (gensym ("cpp_example~"), (t_newmethod) cpp_example_tilde_new, (t_method) cpp_example_tilde_free, sizeof (t_cpp_example_tilde), CLASS_DEFAULT, A_DEFFLOAT, 0);
   class_addmethod (cpp_example_tilde_class, (t_method) cpp_example_tilde_dsp, gensym ("dsp"), (t_atomtype) 0);
   CLASS_MAINSIGNALIN (cpp_example_tilde_class, t_cpp_example_tilde, inlet_float);
-  class_sethelpsymbol (cpp_example_tilde_class, gensym ("cpp_example~"));
 }
