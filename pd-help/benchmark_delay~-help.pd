@@ -1,0 +1,5 @@
+#N canvas 1585 341 609 415 12;
+#X obj 13 118 benchmark_delay~;
+#X text 12 4 benchmark_delay~ - measures the time between the processing
+of subsequent blocks of audio.;
+#X text 10 50, f 67;
