@@ -46,8 +46,10 @@ include_directories(src/include)
 
 #PD-External: basics
 add_library(audiorouting~ SHARED src/support/audiorouting_tilde.c)
+target_link_libraries(audiorouting~ m)
 
 add_library(benchmark_delay~ SHARED src/support/benchmark_delay_tilde.c)
+target_link_libraries(benchmark_delay~ m)
 
 add_library(exit SHARED src/support/exit.c)
 
