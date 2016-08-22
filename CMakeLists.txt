@@ -85,6 +85,28 @@ else()
 	target_link_libraries(websocket_recv websockets json)
 endif()
 
+#TESTING
+enable_testing()
+add_subdirectory(tests)
+add_custom_target(test-verbose COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
+
+##TESTING: unresolved symbols
+add_executable(test_undefined_symbols tests/test_undefined_symbols.c)
+target_link_libraries(test_undefined_symbols dl ${CMAKE_REQUIRED_LIBRARIES})
+
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+  set_property(TARGET ${target_name} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,-export-dynamic")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+  set_property(TARGET ${target_name} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--export-dynamic")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
+  message(FATAL_ERROR "For compiler <<Intel>> the flag for exporting symbols is not set." )
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+  message(FATAL_ERROR "For compiler <<MSVC>> the flag for exporting symbols is not set." )
+endif()
+
+file(GLOB PUREDATA_EXTERNALS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*)
+add_test(test_undefined_symbols ./test_undefined_symbols ${PUREDATA_EXTERNALS})
+
 #Installation
 install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ DESTINATION ${CMAKE_INSTALL_PREFIX}/)
 install(DIRECTORY pd-help/ DESTINATION ${CMAKE_INSTALL_PREFIX}/)
