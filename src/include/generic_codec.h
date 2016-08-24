@@ -98,10 +98,10 @@ static inline void generic_codec_dsp_add (t_generic_codec * codec, unsigned int 
   codec->frame_last_decoded = calloc (block_size, sizeof (codec->frame_last_decoded));
 
   t_int signal_ref[4];
-  signal_ref[0] = x;
-  signal_ref[1] = sp[0]->s_vec;
-  signal_ref[2] = sp[1]->s_vec;
-  signal_ref[3] = sp[0]->s_n;
+  signal_ref[0] = (t_int)x;
+  signal_ref[1] = (t_int)sp[0]->s_vec;
+  signal_ref[2] = (t_int)sp[1]->s_vec;
+  signal_ref[3] = (t_int)sp[0]->s_n;
 
   dsp_addv (f, 4, signal_ref);
 }
