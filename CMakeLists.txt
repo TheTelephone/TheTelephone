@@ -43,7 +43,6 @@ add_subdirectory(src/connectivity)
 
 include_directories(src/include)
 
-
 #PD-External: basics
 add_library(audiorouting~ SHARED src/support/audiorouting_tilde.c)
 target_link_libraries(audiorouting~ m)
@@ -86,6 +85,12 @@ else()
 	add_library(websocket_recv SHARED src/connectivity/websocket_recv.c)
 	target_link_libraries(websocket_recv websockets json)
 endif()
+
+#PD-External: G.711
+include_directories(third-party/itu-t_stl2009_g711)
+file(GLOB G711_SRC third-party/itu-t_stl2009_g711/*)
+add_library(g711~ SHARED src/degradations/g711_tilde.c ${G711_SRC})
+target_link_libraries(g711~ resample m)
 
 #TESTING
 enable_testing()

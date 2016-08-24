@@ -1,0 +1,23 @@
+#N canvas 1855 458 918 430 12;
+#X obj 45 231 dac~;
+#X obj 46 128 adc~;
+#X text 188 171 Input:;
+#X text 185 96 Arguments:;
+#X text 189 190 - signal inlet;
+#X text 189 231 Output:;
+#X text 189 209 - bang: drop next frame;
+#X text 190 250 - signal outlet: degraded input signal;
+#X text 40 5 g711~ - downsamples the input signal to 8kHz \, encodes
+it \, and decodes it.;
+#X obj 109 136 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X text 187 116 1: frame size: 80 \, 160 \, 240;
+#X text 37 49 Supports packet-loss concealment: zero insertion and
+UGST/ITU-T G711 Appendix I., f 67;
+#X text 187 135 2: packet-loss concealment: 0 (zero insertion) [default]
+\, 1 (Appendix I), f 73;
+#X obj 46 176 g711~ 80 1;
+#X connect 1 0 13 0;
+#X connect 9 0 13 0;
+#X connect 13 0 0 0;
+#X connect 13 0 0 1;
