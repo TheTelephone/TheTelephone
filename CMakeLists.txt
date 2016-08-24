@@ -92,6 +92,13 @@ file(GLOB G711_SRC third-party/itu-t_stl2009_g711/*)
 add_library(g711~ SHARED src/degradations/g711_tilde.c ${G711_SRC})
 target_link_libraries(g711~ resample m)
 
+#PD-External: G.722
+include_directories(third-party/spanddsp_g722)
+file(GLOB G722_SRC third-party/spanddsp_g722/*)
+add_library(g722~ SHARED src/degradations/g722_tilde.c  ${G722_SRC})
+target_link_libraries(g722~ resample m)
+
+
 #TESTING
 enable_testing()
 add_subdirectory(tests)
