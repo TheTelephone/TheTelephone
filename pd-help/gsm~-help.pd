@@ -1,0 +1,19 @@
+#N canvas 137 159 918 430 12;
+#X obj 41 186 dac~;
+#X obj 42 83 adc~;
+#X text 184 126 Input:;
+#X text 181 51 Arguments:;
+#X text 185 145 - signal inlet;
+#X text 185 186 Output:;
+#X text 186 205 - signal outlet: degraded input signal;
+#X obj 105 91 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 40 5 gsm~ - downsamples the input signal to 8kHz \, encodes
+it \, and decodes it.;
+#X obj 42 131 gsm~;
+#X text 183 71 None;
+#X text 185 164 - bang: drop next frame (not supported);
+#X connect 1 0 9 0;
+#X connect 7 0 9 0;
+#X connect 9 0 0 0;
+#X connect 9 0 0 1;

@@ -30,8 +30,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/)
 
 #Dependencies
 INCLUDE (CheckLibraryExists)
-set(CMAKE_REQUIRED_LIBRARIES fftw3 json m sndfile websockets)
+set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json m sndfile websockets)
 CHECK_LIBRARY_EXISTS(fftw3 fftw_execute "" HAVE_FFTW)
+CHECK_LIBRARY_EXISTS(gsm gsm_encode "" HAVE_GSM)
 CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
 CHECK_LIBRARY_EXISTS(json json_tokener_parse "" HAVE_JSON)
 CHECK_LIBRARY_EXISTS(websockets lws_client_connect "" HAVE_WEBSOCKETS)
@@ -97,6 +98,14 @@ include_directories(third-party/spanddsp_g722)
 file(GLOB G722_SRC third-party/spanddsp_g722/*)
 add_library(g722~ SHARED src/degradations/g722_tilde.c  ${G722_SRC})
 target_link_libraries(g722~ resample m)
+
+#PD-External: GSM
+if(NOT HAVE_GSM)
+  message(WARNING "libgsm not found: gsm~ will not be build.")
+else()
+  add_library(gsm~ SHARED src/degradations/gsm_tilde.c)
+  target_link_libraries(gsm~ resample m gsm)
+endif()
 
 
 #TESTING
