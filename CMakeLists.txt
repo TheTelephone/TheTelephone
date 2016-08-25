@@ -113,6 +113,12 @@ file(GLOB LPC10_SRC third-party/lpc10/*)
 add_library(lpc10~ SHARED src/degradations/lpc10_tilde.c ${LPC10_SRC})
 target_link_libraries(lpc10~ resample m)
 
+#PD-External: MNRU
+include_directories(third-party/itu-t_stl2009_mnru)
+file(GLOB MNRU_SRC third-party/itu-t_stl2009_mnru/*)
+add_library(mnru~ SHARED src/degradations/mnru_tilde.c ${MNRU_SRC})
+target_link_libraries(mnru~ resample m)
+
 #TESTING
 enable_testing()
 add_subdirectory(tests)
