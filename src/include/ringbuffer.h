@@ -12,6 +12,8 @@ Implementation of ringbuffers.
 #define RINGBUFFER_H_
 
 #include <stdlib.h>
+#include <stdbool.h>
+#include <m_pd.h>
 
 //PureData's t_sample
 typedef struct _t_sample_buffer {
@@ -75,7 +77,7 @@ static int t_sample_buffer_has_chunk (t_sample_buffer * buffer) {
   return 0;
 }
 
-static void t_sample_buffer_read_chunk (t_sample_buffer * buffer, t_sample **chunk, unsigned int size, int *manual_delete) {
+static void t_sample_buffer_read_chunk (t_sample_buffer * buffer, t_sample **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     t_sample *cpx = (t_sample *) malloc (sizeof (t_sample) * size);
@@ -146,14 +148,14 @@ static float float_buffer_get (float_buffer * buffer) {
   return to_return;
 }
 
-static int float_buffer_has_chunk (float_buffer * buffer) {
+static bool float_buffer_has_chunk (float_buffer * buffer) {
   if (buffer->number_elements >= buffer->chunk_size) {
     return 1;
   }
   return 0;
 }
 
-static void float_buffer_read_chunk (float_buffer * buffer, float **chunk, unsigned int size, int *manual_delete) {
+static void float_buffer_read_chunk (float_buffer * buffer, float **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     float *cpx = (float *) malloc (sizeof (float) * size);
@@ -222,14 +224,14 @@ static double double_buffer_get (double_buffer * buffer) {
   return to_return;
 }
 
-static int double_buffer_has_chunk (double_buffer * buffer) {
+static bool double_buffer_has_chunk (double_buffer * buffer) {
   if (buffer->number_elements >= buffer->chunk_size) {
     return 1;
   }
   return 0;
 }
 
-static void double_buffer_read_chunk (double_buffer * buffer, double **chunk, unsigned int size, int *manual_delete) {
+static void double_buffer_read_chunk (double_buffer * buffer, double **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     double *cpx = (double *) malloc (sizeof (double) * size);
@@ -299,14 +301,14 @@ static short short_buffer_get (short_buffer * buffer) {
   return to_return;
 }
 
-static int short_buffer_has_chunk (short_buffer * buffer) {
+static bool short_buffer_has_chunk (short_buffer * buffer) {
   if (buffer->number_elements >= buffer->chunk_size) {
     return 1;
   }
   return 0;
 }
 
-static void short_buffer_read_chunk (short_buffer * buffer, short **chunk, unsigned int size, int *manual_delete) {
+static void short_buffer_read_chunk (short_buffer * buffer, short **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     short *cpx = (short *) malloc (sizeof (short) * size);
@@ -376,14 +378,14 @@ static int int_buffer_get (int_buffer * buffer) {
   return to_return;
 }
 
-static int int_buffer_has_chunk (int_buffer * buffer) {
+static bool int_buffer_has_chunk (int_buffer * buffer) {
   if (buffer->number_elements >= buffer->chunk_size) {
     return 1;
   }
   return 0;
 }
 
-static void int_buffer_read_chunk (int_buffer * buffer, int **chunk, unsigned int size, int *manual_delete) {
+static void int_buffer_read_chunk (int_buffer * buffer, int **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     int *cpx = (int *) malloc (sizeof (int) * size);
