@@ -51,7 +51,7 @@ static inline float *do_resample (unsigned int src_size, float *src, void *resam
     if (dst_samplecount_current >= 0) {
       dst_idx += dst_samplecount_current;
     }
-  } while (dst_samplecount_current > 0 && src_idx < src_size);
+  } while (!(dst_samplecount_current < 0 || (dst_samplecount_current == 0 && src_idx == src_size)));
 
   *dst_size = dst_idx;
   return dst;
