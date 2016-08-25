@@ -1,0 +1,23 @@
+#N canvas 359 245 918 430 12;
+#X obj 44 170 dac~;
+#X obj 45 67 adc~;
+#X text 187 130 Input:;
+#X text 184 35 Arguments:;
+#X text 188 149 - signal inlet;
+#X text 188 190 Output:;
+#X text 188 168 - bang: drop next frame;
+#X text 189 209 - signal outlet: degraded input signal;
+#X obj 108 75 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 186 55 1: frame size: 80 \, 160 \, 240;
+#X text 186 74 2: forward error correction: 0 (no) [default] \, 1 (yes)
+, f 73;
+#X text 186 91 2: sample rate: 8000 [default] \, 12000 \, 16000 \,
+24000, f 73;
+#X text 40 5 opus~ - downsamples the input signal to \, encodes it
+\, and decodes it., f 69;
+#X obj 45 115 opus~ 160 0 8000;
+#X connect 1 0 13 0;
+#X connect 8 0 13 0;
+#X connect 13 0 0 0;
+#X connect 13 0 0 1;

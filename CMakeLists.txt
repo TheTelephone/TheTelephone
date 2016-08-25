@@ -30,9 +30,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/)
 
 #Dependencies
 INCLUDE (CheckLibraryExists)
-set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json m sndfile websockets)
+set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json m opus sndfile websockets)
 CHECK_LIBRARY_EXISTS(fftw3 fftw_execute "" HAVE_FFTW)
 CHECK_LIBRARY_EXISTS(gsm gsm_encode "" HAVE_GSM)
+CHECK_LIBRARY_EXISTS(opus opus_encode_float "" HAVE_OPUS)
 CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
 CHECK_LIBRARY_EXISTS(json json_tokener_parse "" HAVE_JSON)
 CHECK_LIBRARY_EXISTS(websockets lws_client_connect "" HAVE_WEBSOCKETS)
@@ -118,6 +119,14 @@ include_directories(third-party/itu-t_stl2009_mnru)
 file(GLOB MNRU_SRC third-party/itu-t_stl2009_mnru/*)
 add_library(mnru~ SHARED src/degradations/mnru_tilde.c ${MNRU_SRC})
 target_link_libraries(mnru~ resample m)
+
+#PD-External: OPUS
+if(NOT HAVE_OPUS)
+  message(WARNING "libopus not found: opus~ will not be build.")
+else()
+  add_library(opus~ SHARED src/degradations/opus_tilde.c)
+  target_link_libraries(opus~ resample opus)
+endif()
 
 #TESTING
 enable_testing()
