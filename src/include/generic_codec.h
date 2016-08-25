@@ -109,7 +109,7 @@ static inline void generic_codec_dsp_add (t_generic_codec * codec, unsigned int 
 }
 
 static inline void generic_codec_resample_to_internal (t_generic_codec * codec, unsigned int n, t_sample * in) {
-  float *buffer = (float *) malloc (n * sizeof (*buffer));
+  float buffer[n];
   for (int i = 0; i < n; i++) {
     buffer[i] = in[i];
   }
@@ -118,7 +118,6 @@ static inline void generic_codec_resample_to_internal (t_generic_codec * codec, 
   float *input = do_resample (n, buffer, codec->resampler_input, (double) (codec->sample_rate_internal / codec->sample_rate_external), &input_size);
   float_buffer_add_chunk (codec->ringbuffer_input, input, input_size);
 
-  free (buffer);
   free (input);
 }
 
