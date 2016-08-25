@@ -125,12 +125,12 @@ void *g711_tilde_new (t_floatarg frame_size, t_floatarg packet_loss_concealment_
 
   //Parameters
   if ((int)frame_size != 80 && frame_size != 160 && frame_size != 240) {
-    error("g711~: invalid frame size specified (%i). Using 80.", (int)packet_loss_concealment_mode);
+    error("g711~: invalid frame size specified (%d). Using 80.", (int)frame_size);
     frame_size = 80;
   }
 
   if (packet_loss_concealment_mode < 0 && packet_loss_concealment_mode > 1) {
-    error ("g711~: invalid packet loss concealment mode specified (%i). Using mode 0.", (int) packet_loss_concealment_mode);
+    error ("g711~: invalid packet loss concealment mode specified (%d). Using mode 0.", (int) packet_loss_concealment_mode);
     packet_loss_concealment_mode = 0;
   }
   x->packet_loss_concealment_mode = packet_loss_concealment_mode;
