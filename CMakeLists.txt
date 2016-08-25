@@ -107,6 +107,11 @@ else()
   target_link_libraries(gsm~ resample m gsm)
 endif()
 
+#PD-External: LPC-10
+include_directories(third-party/lpc10)
+file(GLOB LPC10_SRC third-party/lpc10/*)
+add_library(lpc10~ SHARED src/degradations/lpc10_tilde.c ${LPC10_SRC})
+target_link_libraries(lpc10~ resample m)
 
 #TESTING
 enable_testing()
