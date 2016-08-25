@@ -139,7 +139,7 @@ void *g711_tilde_new (t_floatarg frame_size, t_floatarg packet_loss_concealment_
   generic_codec_init (&x->codec, &x->x_obj, 8000, frame_size);
   g711plc_construct (&x->lc);
 
-  post ("g711~: Created with frame size (%d) and packet loss concealment mode %d.", x->codec.frame_size, x->packet_loss_concealment_mode);
+  post ("g711~: Created with frame size (%d) and packet loss concealment mode (%d).", x->codec.frame_size, x->packet_loss_concealment_mode);
 
   return (void *) x;
 }
