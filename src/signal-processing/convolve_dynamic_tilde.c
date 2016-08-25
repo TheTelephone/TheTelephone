@@ -40,6 +40,7 @@ Implementation details:
 #include <stdlib.h>
 #include <string.h>
 #include <sndfile.h>
+#include <stdbool.h>
 #include <fftw3.h>
 #include <math.h>
 #include "ringbuffer.h"
@@ -137,7 +138,7 @@ void convolve_dynamic_mul (t_convolve_dynamic_tilde * x, unsigned int impulse_re
 }
 
 void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
-  int free_required = 0;
+  bool free_required = false;
   float *signal_block;
   float_buffer_read_chunk (x->input_buffer, &signal_block, x->input_buffer->chunk_size, &free_required);
 
@@ -209,7 +210,7 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 }
 
 void convolve_dynamic_add_to_output (t_convolve_dynamic_tilde * x, t_sample * out) {
-  int free_required = 0;
+  bool free_required = false;
   float *signal_block;
   float_buffer_read_chunk (x->output_buffer, &signal_block, x->output_buffer->chunk_size, &free_required);
 

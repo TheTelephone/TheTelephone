@@ -24,6 +24,7 @@ Internal Signal flow:
 */
 
 #include <m_pd.h>
+#include <stdbool.h>
 #include "ringbuffer.h"
 
 #define MAX_BUFFER 8172000      //Maximum buffer size of the internal ringbuffers
@@ -64,7 +65,7 @@ t_int *delay_tilde_perform (t_int * w) {
 
   //If a new chunk is available in the input buffer, then copy it to the output buffer.
   if (t_sample_buffer_has_chunk (x->input_buffer)) {
-    int free_required = 0;
+    bool free_required = false;
     float *out_chunk;
     t_sample_buffer_read_chunk (x->input_buffer, &out_chunk, x->input_buffer->chunk_size, &free_required);
     t_sample_buffer_add_chunk (x->output_buffer, out_chunk, x->input_buffer->chunk_size);
@@ -75,7 +76,7 @@ t_int *delay_tilde_perform (t_int * w) {
   }
   //If a new chunk is available in the output buffer, then copy it to the outlet.
   if (t_sample_buffer_has_chunk (x->output_buffer)) {
-    int free_required = 0;
+    bool free_required = false;
     float *out_chunk;
     t_sample_buffer_read_chunk (x->output_buffer, &out_chunk, x->output_buffer->chunk_size, &free_required);
 
