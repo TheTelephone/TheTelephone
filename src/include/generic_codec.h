@@ -90,9 +90,11 @@ static inline void generic_codec_dsp_add (t_generic_codec * codec, unsigned int 
   double factor_out = (double) (codec->sample_rate_external / codec->sample_rate_internal);
   codec->resampler_output = resample_open (1, factor_out, factor_out);
 
-  //Buffers are allocated with a maximum of three times the block size
+  //Buffers are allocated with a maximum of three times the INPUT block size
   codec->ringbuffer_input = float_buffer_alloc (codec->frame_size * 3, codec->frame_size);
-  codec->ringbuffer_output = float_buffer_alloc (block_size * 3, block_size);
+  int output_size = (codec->frame_size * factor_out + .5) * 3;
+  codec->ringbuffer_output = float_buffer_alloc (output_size, block_size);
+
   codec->drop_next_frame = false;
 
   codec->frame_last_decoded = calloc (block_size, sizeof (codec->frame_last_decoded));
