@@ -20,13 +20,17 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   set(CMAKE_SHARED_LIBRARY_SUFFIX_C ".dll")
 endif()
 
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 #Default installation target is: ~/pd-externals
 if(NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/pd-externals")
   message("Setting install directory to ${CMAKE_INSTALL_PREFIX} - to override #set CMAKE_INSTALL_PREFIX.")
 endif()
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/)
+#Installation
+install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY pd-help/ DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 #Dependencies
 INCLUDE (CheckLibraryExists)
@@ -162,7 +166,3 @@ endif()
 
 file(GLOB PUREDATA_EXTERNALS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*)
 add_test(test_undefined_symbols ./test_undefined_symbols ${PUREDATA_EXTERNALS})
-
-#Installation
-install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ DESTINATION ${CMAKE_INSTALL_PREFIX}/)
-install(DIRECTORY pd-help/ DESTINATION ${CMAKE_INSTALL_PREFIX}/)
