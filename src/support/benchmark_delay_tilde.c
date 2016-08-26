@@ -76,11 +76,11 @@ t_int *benchmark_delay_tilde_perform (t_int * w) {
 
     x->execution_time_min = fmin (execution_time, x->execution_time_min);
     x->execution_time_max = fmax (execution_time, x->execution_time_max);
-  }
 
-  if (x->s0 >= 2) {
-    double stdev = sqrt ((x->s0 * x->s2 - x->s1 * x->s1) / (x->s0 * (x->s0 - 1)));
-    post ("benchmark_delay~: n=%d;avg=%f;stdev=%f;min=%f;max=%f)", x->s0, x->s1 / x->s0, stdev, x->execution_time_min, x->execution_time_max);
+    if (x->s0 >= 2) {
+      double stdev = sqrt ((x->s0 * x->s2 - x->s1 * x->s1) / (x->s0 * (x->s0 - 1)));
+      post ("benchmark_delay~: current=%f;n=%d;avg=%f;stdev=%f;min=%f;max=%f)", execution_time, x->s0, x->s1 / x->s0, stdev, x->execution_time_min, x->execution_time_max);
+    }
   }
 
   return (w + 4);
