@@ -97,6 +97,9 @@ void g722_add_to_outbuffer (t_g722_tilde * x) {
     x->codec.drop_next_frame = false;
 
     //Copy to outbuffer
+    for (int i = 0; i < x->codec.frame_size; i++) {
+      frame[i] = (float) raw[i] / SHRT_MAX;
+    }
     generic_codec_resample_to_external (&x->codec, x->codec.frame_size, frame);
 
   } else {
