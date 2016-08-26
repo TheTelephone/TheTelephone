@@ -67,7 +67,7 @@ t_int *delay_tilde_perform (t_int * w) {
   if (t_sample_buffer_has_chunk (x->input_buffer)) {
     bool free_required = false;
     float *out_chunk;
-    t_sample_buffer_read_chunk (x->input_buffer, &out_chunk, x->input_buffer->chunk_size, &free_required);
+    t_sample_buffer_pop_chunk (x->input_buffer, &out_chunk, x->input_buffer->chunk_size, &free_required);
     t_sample_buffer_add_chunk (x->output_buffer, out_chunk, x->input_buffer->chunk_size);
 
     if (free_required) {
@@ -78,7 +78,7 @@ t_int *delay_tilde_perform (t_int * w) {
   if (t_sample_buffer_has_chunk (x->output_buffer)) {
     bool free_required = false;
     float *out_chunk;
-    t_sample_buffer_read_chunk (x->output_buffer, &out_chunk, x->output_buffer->chunk_size, &free_required);
+    t_sample_buffer_pop_chunk (x->output_buffer, &out_chunk, x->output_buffer->chunk_size, &free_required);
 
     for (int i = 0; i < x->output_buffer->chunk_size; i++) {
       out[i] = out_chunk[i];

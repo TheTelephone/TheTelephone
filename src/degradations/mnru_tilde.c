@@ -69,7 +69,7 @@ t_int *mnru_tilde_perform (t_int * w) {
 void mnru_add_to_outbuffer (t_mnru_tilde * x) {
   bool free_required = false;
   float *frame;
-  float_buffer_read_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
+  float_buffer_pop_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
 
   float mnru_output[x->codec.frame_size];
 

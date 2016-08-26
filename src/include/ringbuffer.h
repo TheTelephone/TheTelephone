@@ -60,24 +60,15 @@ static void t_sample_buffer_add (t_sample_buffer * buffer, t_sample element) {
 
 static void t_sample_buffer_add_chunk (t_sample_buffer * buffer, t_sample *chunk, unsigned int size) {
   for (int i = 0; i < size; i++) {
-    t_sample_buffer_add (buffer, *(chunk + i));
+    t_sample_buffer_add (buffer, chunk[i]);
   }
 }
 
-static t_sample t_sample_buffer_get (t_sample_buffer * buffer) {
-  t_sample to_return = buffer->data[buffer->number_elements - 1];
-  buffer->number_elements--;
-  return to_return;
+static bool t_sample_buffer_has_chunk (t_sample_buffer * buffer) {
+  return buffer->number_elements >= buffer->chunk_size;
 }
 
-static int t_sample_buffer_has_chunk (t_sample_buffer * buffer) {
-  if (buffer->number_elements >= buffer->chunk_size) {
-    return 1;
-  }
-  return 0;
-}
-
-static void t_sample_buffer_read_chunk (t_sample_buffer * buffer, t_sample **chunk, unsigned int size, bool *manual_delete) {
+static void t_sample_buffer_pop_chunk (t_sample_buffer * buffer, t_sample **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     t_sample *cpx = (t_sample *) malloc (sizeof (t_sample) * size);
@@ -138,24 +129,15 @@ static void float_buffer_add (float_buffer * buffer, float element) {
 
 static void float_buffer_add_chunk (float_buffer * buffer, float *chunk, unsigned int size) {
   for (int i = 0; i < size; i++) {
-    float_buffer_add (buffer, *(chunk + i));
+    float_buffer_add (buffer, chunk[i]);
   }
-}
-
-static float float_buffer_get (float_buffer * buffer) {
-  float to_return = buffer->data[buffer->number_elements - 1];
-  buffer->number_elements--;
-  return to_return;
 }
 
 static bool float_buffer_has_chunk (float_buffer * buffer) {
-  if (buffer->number_elements >= buffer->chunk_size) {
-    return 1;
-  }
-  return 0;
+  return buffer->number_elements >= buffer->chunk_size;
 }
 
-static void float_buffer_read_chunk (float_buffer * buffer, float **chunk, unsigned int size, bool *manual_delete) {
+static void float_buffer_pop_chunk (float_buffer * buffer, float **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     float *cpx = (float *) malloc (sizeof (float) * size);
@@ -214,24 +196,15 @@ static void double_buffer_add (double_buffer * buffer, double element) {
 
 static void double_buffer_add_chunk (double_buffer * buffer, double *chunk, unsigned int size) {
   for (int i = 0; i < size; i++) {
-    double_buffer_add (buffer, *(chunk + i));
+    double_buffer_add (buffer, chunk[i]);
   }
-}
-
-static double double_buffer_get (double_buffer * buffer) {
-  double to_return = buffer->data[buffer->number_elements - 1];
-  buffer->number_elements--;
-  return to_return;
 }
 
 static bool double_buffer_has_chunk (double_buffer * buffer) {
-  if (buffer->number_elements >= buffer->chunk_size) {
-    return 1;
-  }
-  return 0;
+  return buffer->number_elements >= buffer->chunk_size;
 }
 
-static void double_buffer_read_chunk (double_buffer * buffer, double **chunk, unsigned int size, bool *manual_delete) {
+static void double_buffer_pop_chunk (double_buffer * buffer, double **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     double *cpx = (double *) malloc (sizeof (double) * size);
@@ -289,26 +262,18 @@ static void short_buffer_add (short_buffer * buffer, short element) {
   }
   buffer->number_elements++;
 }
+
 static void short_buffer_add_chunk (short_buffer * buffer, short *chunk, unsigned int size) {
   for (int i = 0; i < size; i++) {
-    short_buffer_add (buffer, *(chunk + i));
+    short_buffer_add (buffer, chunk[i]);
   }
-}
-
-static short short_buffer_get (short_buffer * buffer) {
-  short to_return = buffer->data[buffer->number_elements - 1];
-  buffer->number_elements--;
-  return to_return;
 }
 
 static bool short_buffer_has_chunk (short_buffer * buffer) {
-  if (buffer->number_elements >= buffer->chunk_size) {
-    return 1;
-  }
-  return 0;
+  return buffer->number_elements >= buffer->chunk_size;
 }
 
-static void short_buffer_read_chunk (short_buffer * buffer, short **chunk, unsigned int size, bool *manual_delete) {
+static void short_buffer_pop_chunk (short_buffer * buffer, short **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     short *cpx = (short *) malloc (sizeof (short) * size);
@@ -366,26 +331,18 @@ static void int_buffer_add (int_buffer * buffer, int element) {
   }
   buffer->number_elements++;
 }
+
 static void int_buffer_add_chunk (int_buffer * buffer, int *chunk, unsigned int size) {
   for (int i = 0; i < size; i++) {
-    int_buffer_add (buffer, *(chunk + i));
+    int_buffer_add (buffer, chunk[i]);
   }
-}
-
-static int int_buffer_get (int_buffer * buffer) {
-  int to_return = buffer->data[buffer->number_elements - 1];
-  buffer->number_elements--;
-  return to_return;
 }
 
 static bool int_buffer_has_chunk (int_buffer * buffer) {
-  if (buffer->number_elements >= buffer->chunk_size) {
-    return 1;
-  }
-  return 0;
+  return buffer->number_elements >= buffer->chunk_size;
 }
 
-static void int_buffer_read_chunk (int_buffer * buffer, int **chunk, unsigned int size, bool *manual_delete) {
+static void int_buffer_pop_chunk (int_buffer * buffer, int **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     int *cpx = (int *) malloc (sizeof (int) * size);

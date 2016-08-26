@@ -131,7 +131,7 @@ static inline void generic_codec_resample_to_external (t_generic_codec * codec, 
 static inline void generic_codec_to_outbuffer (t_generic_codec * codec, t_sample * out) {
   bool manual = false;
   float *out_chunk;
-  float_buffer_read_chunk (codec->ringbuffer_output, &out_chunk, codec->ringbuffer_output->chunk_size, &manual);
+  float_buffer_pop_chunk (codec->ringbuffer_output, &out_chunk, codec->ringbuffer_output->chunk_size, &manual);
 
   for (int i = 0; i < codec->ringbuffer_output->chunk_size; i++) {
     out[i] = out_chunk[i];

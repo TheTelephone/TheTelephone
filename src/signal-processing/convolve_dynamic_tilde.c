@@ -133,7 +133,7 @@ void convolve_dynamic_mul (t_convolve_dynamic_tilde * x, unsigned int impulse_re
 void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
   bool free_required = false;
   float *signal_block;
-  float_buffer_read_chunk (x->input_buffer, &signal_block, x->input_buffer->chunk_size, &free_required);
+  float_buffer_pop_chunk (x->input_buffer, &signal_block, x->input_buffer->chunk_size, &free_required);
 
   //FFT - prepare incoming signal (to be convolved)
   for (int i = 0; i < x->input_buffer->chunk_size; i++) {
@@ -205,7 +205,7 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 void convolve_dynamic_add_to_output (t_convolve_dynamic_tilde * x, t_sample * out) {
   bool free_required = false;
   float *signal_block;
-  float_buffer_read_chunk (x->output_buffer, &signal_block, x->output_buffer->chunk_size, &free_required);
+  float_buffer_pop_chunk (x->output_buffer, &signal_block, x->output_buffer->chunk_size, &free_required);
 
   for (int i = 0; i < x->output_buffer->chunk_size; i++) {
     out[i] = signal_block[i];

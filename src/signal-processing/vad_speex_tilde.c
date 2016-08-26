@@ -69,7 +69,7 @@ t_int *vad_speex_tilde_perform (t_int * w) {
 void vad_speex_add_to_outbuffer (t_vad_speex_tilde * x) {
   bool free_required = false;
   float *frame;
-  float_buffer_read_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
+  float_buffer_pop_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
 
   short raw[x->codec.ringbuffer_input->chunk_size];
   for (int i = 0; i < x->codec.ringbuffer_input->chunk_size; i++) {

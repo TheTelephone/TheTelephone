@@ -68,7 +68,7 @@ t_int *speex_tilde_perform (t_int * w) {
 void speex_add_to_outbuffer (t_speex_tilde * x) {
   bool free_required = false;
   float *frame;
-  float_buffer_read_chunk (x->codec.ringbuffer_input, &frame, x->codec.frame_size, &free_required);
+  float_buffer_pop_chunk (x->codec.ringbuffer_input, &frame, x->codec.frame_size, &free_required);
 
   //Encode
   short raw[x->codec.frame_size];

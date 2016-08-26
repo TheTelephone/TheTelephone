@@ -69,7 +69,7 @@ t_int *opus_tilde_perform (t_int * w) {
 void opus_add_to_outbuffer (t_opus_tilde * x) {
   bool free_required = false;
   float *frame;
-  float_buffer_read_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
+  float_buffer_pop_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
 
   int decompressed_length = x->codec.frame_size;
   char compressed[x->codec.frame_size]; //Assuming coding requires less space

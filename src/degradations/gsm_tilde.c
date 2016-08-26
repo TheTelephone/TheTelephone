@@ -64,7 +64,7 @@ t_int *gsm_tilde_perform (t_int * w) {
 void gsm_add_to_outbuffer (t_gsm_tilde * x) {
   bool free_required = false;
   float *frame;
-  float_buffer_read_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
+  float_buffer_pop_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
 
   short raw[x->codec.frame_size];
   for (int i = 0; i < x->codec.frame_size; i++) {
