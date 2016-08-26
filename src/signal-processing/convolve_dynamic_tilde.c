@@ -102,12 +102,8 @@ t_int *convolve_dynamic_tilde_perform (t_int * w) {
 
   if (float_buffer_has_chunk (x->output_buffer)) {
     convolve_dynamic_add_to_output (x, out);
-  } else {
-    //Is actually a buffer underrun; happens only in the beginning.
-    for (int i = 0; i < n; i++) {
-      out[i] = 0;
-    }
   }
+
   return (w + 5);
 }
 
@@ -154,9 +150,9 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 
   //Check if IR needs to be changed
   int next_response = (unsigned int) (x->impulse_response_next);
-  if (!(0 <= next_response || next_response <= x->impulse_response_channels)) {
+  if (!(0 <= next_response && next_response <= x->impulse_response_channels)) {
     error ("convolve_dynamic~: requested impulse response (%d) is not available; 0..%d are available.", next_response, x->impulse_response_channels);
-    x->impulse_response_next = x->impulse_response_current;
+    next_response = x->impulse_response_current;
   }
 
   if (next_response == x->impulse_response_current) {
@@ -265,8 +261,9 @@ void convolve_dynamic_tilde_dsp (t_convolve_dynamic_tilde * x, t_signal ** sp) {
     x->crossfading_filter[i] = cos (rad) * cos (rad);
   }
 
-  x->input_buffer = float_buffer_alloc (MAX_BUFFER, x->impulse_response_length);
-  x->output_buffer = float_buffer_alloc (MAX_BUFFER, sp[0]->s_n);
+  //Buffers are allocated with a maximum of three times the INPUT block size
+  x->input_buffer = float_buffer_alloc (x->impulse_response_length * 3, x->impulse_response_length);
+  x->output_buffer = float_buffer_alloc (x->impulse_response_length * 3, sp[0]->s_n);
 
   dsp_add (convolve_dynamic_tilde_perform, 4, x, sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
   post ("convolve_dynamic~: number of impulse responses %d, impulse response length %d; sampling rate %d.", x->impulse_response_channels, x->impulse_response_length, (int) x->impulse_response_sample_rate);
@@ -322,21 +319,17 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
   t_convolve_dynamic_tilde *x = (t_convolve_dynamic_tilde *) pd_new (convolve_dynamic_tilde_class);
   x->impulse_response_sample_rate = sfinfo.samplerate;
   x->impulse_response_channels = sfinfo.channels;
-
-  //Prepare Impulse response: resampling
+  x->impulse_response_length = sfinfo.frames;
+  
   if ((int) x->impulse_response_sample_rate != (int) sys_getsr ()) {
     error ("convolve_dynamic~: PureData's sampling rate (%d) and the sampling rate of IRs (%d).", x->impulse_response_sample_rate, (int) sys_getsr ());
     return NULL;
   }
+  
   //Read IRs-file
-  x->impulse_response = (float *) malloc (MAX_BUFFER * sizeof (float));
-  x->impulse_response_size = sf_read_float (infile, x->impulse_response, MAX_BUFFER);
+  x->impulse_response = (float *) malloc (x->impulse_response_length * x->impulse_response_channels * sizeof (float));
+  x->impulse_response_size = sf_readf_float (infile, x->impulse_response, x->impulse_response_length);
   sf_close (infile);
-
-  if (x->impulse_response_size == MAX_BUFFER) {
-    error ("convolve_dynamic~: impulse response only partly loaded: it is larger than the buffer limitation (MAX_BUFFER); re-compile with adjusted buffer limits if needed.");
-  }
-  x->impulse_response_length = x->impulse_response_size / x->impulse_response_channels;
 
   x->outlet = outlet_new (&x->x_obj, &s_signal);
 
