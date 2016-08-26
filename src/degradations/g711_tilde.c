@@ -124,8 +124,8 @@ void *g711_tilde_new (t_floatarg frame_size, t_floatarg packet_loss_concealment_
   t_g711_tilde *x = (t_g711_tilde *) pd_new (g711_tilde_class);
 
   //Parameters
-  if ((int)frame_size != 80 && frame_size != 160 && frame_size != 240) {
-    error("g711~: invalid frame size specified (%d). Using 80.", (int)frame_size);
+  if ((int) frame_size != 80 && frame_size != 160 && frame_size != 240) {
+    error ("g711~: invalid frame size specified (%d). Using 80.", (int) frame_size);
     frame_size = 80;
   }
 

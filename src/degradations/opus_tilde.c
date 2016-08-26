@@ -82,7 +82,6 @@ void opus_add_to_outbuffer (t_opus_tilde * x) {
   if (x->codec.drop_next_frame) {
     decompressed_length = opus_decode_float (x->decoder, NULL, 0, frame, x->codec.frame_size, x->forward_error_correction);
     x->codec.drop_next_frame = false;
-post("ASDFASDF");
   } else {
     decompressed_length = opus_decode_float (x->decoder, compressed, compressed_length, frame, x->codec.frame_size, x->forward_error_correction);
   }
@@ -131,18 +130,18 @@ void opus_tilde_free (t_opus_tilde * x) {
 void *opus_tilde_new (t_floatarg frame_size, t_floatarg forward_error_correction, t_floatarg sample_rate) {
   t_opus_tilde *x = (t_opus_tilde *) pd_new (opus_tilde_class);
 
-  if ((int)frame_size != 80 && (int)frame_size != 160 && (int)frame_size != 240) {
-    error("opus~: invalid frame size specified (%d). Using 80.", (int)frame_size);
+  if ((int) frame_size != 80 && (int) frame_size != 160 && (int) frame_size != 240) {
+    error ("opus~: invalid frame size specified (%d). Using 80.", (int) frame_size);
     frame_size = 80;
   }
 
-  if ((int)sample_rate != 8000 && (int)sample_rate != 12000 && (int)sample_rate != 16000 && (int)sample_rate != 24000 && (int)sample_rate != 48000) {
-    error("opus~: invalid sample rate specified (%d). Using 8000.", (int)sample_rate);
+  if ((int) sample_rate != 8000 && (int) sample_rate != 12000 && (int) sample_rate != 16000 && (int) sample_rate != 24000 && (int) sample_rate != 48000) {
+    error ("opus~: invalid sample rate specified (%d). Using 8000.", (int) sample_rate);
     sample_rate = 8000;
   }
 
-  if ((int)forward_error_correction != 0 && (int)forward_error_correction != 1) {
-    error("opus~: invalid forward error correction specified (%d). Using 0 (none).", (int)forward_error_correction);
+  if ((int) forward_error_correction != 0 && (int) forward_error_correction != 1) {
+    error ("opus~: invalid forward error correction specified (%d). Using 0 (none).", (int) forward_error_correction);
     forward_error_correction = 0;
   }
   x->forward_error_correction = forward_error_correction;
