@@ -23,3 +23,12 @@ indent \
 -l999 \
 *.{c,h}
 ```
+
+Code documentation
+---
+
+via [doxygen](www.doxygen.org)
+
+```bash
+cmake . && make doc
+```

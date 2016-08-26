@@ -1,0 +1,11 @@
+PROJECT_NAME           = TheTelephone
+
+OUTPUT_DIRECTORY       = documentation
+
+INPUT                  = README.md src/
+USE_MDFILE_AS_MAINPAGE = README.md
+EXTRACT_ALL            = YES
+HAVE_DOT               = YES
+CALL_GRAPH             = YES
+RECURSIVE              = YES
+QUIET                  = YES

@@ -166,3 +166,10 @@ endif()
 
 file(GLOB PUREDATA_EXTERNALS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*)
 add_test(test_undefined_symbols ./test_undefined_symbols ${PUREDATA_EXTERNALS})
+
+#DOCUMENTATION
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+#  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxyfile @ONLY)
+  add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/doxyfile WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Generating API documentation with Doxygen")
+endif(DOXYGEN_FOUND)
