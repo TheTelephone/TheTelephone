@@ -49,9 +49,6 @@ Implementation details:
 #define M_PI 3.14159265358979323846
 #endif
 
-//Size of the internal ringbuffers and maximum overall size of IRs.
-#define MAX_BUFFER 8172000
-
 static t_class *convolve_dynamic_tilde_class;
 
 typedef struct _convolve_dynamic_tilde {
