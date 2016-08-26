@@ -61,6 +61,9 @@ typedef struct _convolve_dynamic_tilde {
 
   t_outlet *outlet;
 
+  unsigned int block_size;
+  unsigned int blocks_per_irir;
+
   float *impulse_response;      //ATTENTION: may contain interleaved (multi-channel) data!
   unsigned int impulse_response_size;   //Length of the interleaved audio
   unsigned int impulse_response_length; //Length of ONE impulse response!
@@ -73,18 +76,18 @@ typedef struct _convolve_dynamic_tilde {
 
   fftw_plan fftw_plan;
   fftw_plan fftw_plan_inverse;
-  double *fftw_in;              //FFTW3: half-complex
-  double *fftw_out;             //FFTW3: half-complex
+  double *fftw_in;              //FFTW3: half-complex; length: 2*block_size
+  double *fftw_out;             //FFTW3: half-complex; length: 2*block_size
 
   float *overlap_add;
   float *crossfading_filter;
 
-  float_buffer *input_buffer;      //Ringbuffer for incoming signals
-  float_buffer *output_buffer;     //Ringbuffer for outgoing signals
+  float_buffer *input_buffer;   //Ringbuffer for incoming signals
+  float_buffer *output_buffer;  //Ringbuffer for outgoing signals //TODO REMOVE
 } t_convolve_dynamic_tilde;
 
 void convolve_dynamic_add_to_output (t_convolve_dynamic_tilde * x, t_sample * out);
-void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x);
+void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x);  //TODO REMOVE
 void convolve_dynamic_free_internal (t_convolve_dynamic_tilde * x);
 
 t_int *convolve_dynamic_tilde_perform (t_int * w) {
@@ -95,9 +98,8 @@ t_int *convolve_dynamic_tilde_perform (t_int * w) {
 
   float_buffer_add_chunk (x->input_buffer, in, n);
 
-  if (float_buffer_has_chunk (x->input_buffer)) {
-    convolve_dynamic_add_to_outbuffer (x);
-  }
+  post ("Convolving");
+  convolve_dynamic_add_to_outbuffer (x);
 
   if (float_buffer_has_chunk (x->output_buffer)) {
     convolve_dynamic_add_to_output (x, out);
@@ -133,28 +135,47 @@ void convolve_dynamic_mul (t_convolve_dynamic_tilde * x, unsigned int impulse_re
 }
 
 void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
-  bool free_required = false;
-  float *signal_block;
-  float_buffer_pop_chunk (x->input_buffer, &signal_block, x->input_buffer->chunk_size, &free_required);
+  for (int i = 0; i < x->blocks_per_irir; i++) {
+    bool free_required = false;
+    float *signal_block;
+    if (i < x->blocks_per_irir - 1) {
+      float_buffer_read_chunk_n (x->input_buffer, &signal_block, x->input_buffer->chunk_size, (x->blocks_per_irir - 1 - i), &free_required);
+    } else {
+      //Remove the oldest chunk from ringbuffer
+      float_buffer_pop_chunk (x->input_buffer, &signal_block, x->input_buffer->chunk_size, &free_required);
+    }
 
-  //FFT - prepare incoming signal (to be convolved)
-  for (int i = 0; i < x->input_buffer->chunk_size; i++) {
-    x->fftw_in[i] = signal_block[i];
+    //FFT - prepare incoming signal (to be convolved)
+    for (int i = 0; i < x->block_size; i++) {
+      x->fftw_in[i] = signal_block[i];
+    }
+    for (int i = x->block_size; i < x->irtf_length; i++) {
+      x->fftw_in[i] = 0;
+    }
+    fftw_execute (x->fftw_plan);
+
+    //Convolve
+    convolve_dynamic_mul (x, x->impulse_response_current, (x->blocks_per_irir - 1 - i));
+    for (int i = 0; i < x->block_size; i++) {
+      //Copy real part to output, ignore complex part
+      x->overlap_add[i] += x->fftw_out[i];
+    }
+
+    if (free_required) {
+      free (signal_block);
+    }
   }
-  for (int i = x->input_buffer->chunk_size; i < x->irtf_length; i++) {
-    x->fftw_in[i] = 0;
-  }
-  fftw_execute (x->fftw_plan);
 
-
+/*
   //Check if IR needs to be changed
   unsigned int next_response = (unsigned int) (x->impulse_response_next);
   if (!(0 <= next_response && next_response <= x->impulse_response_channels)) {
     error ("convolve_dynamic~: requested impulse response (%d) is not available; 0..%d are available.", next_response, x->impulse_response_channels);
     next_response = x->impulse_response_current;
   }
+*/
 
-  if (next_response == x->impulse_response_current) {
+/*  if (next_response == x->impulse_response_current) {
     //IR not changed
     convolve_dynamic_mul (x, x->impulse_response_current);
     for (int i = 0; i < x->input_buffer->chunk_size; i++) {
@@ -191,16 +212,13 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 
     x->impulse_response_current = next_response;
   }
+*/
 
   float_buffer_add_chunk (x->output_buffer, x->overlap_add, x->input_buffer->chunk_size);
 
   //overlap-add: save for next block
   for (int i = 0; i < x->input_buffer->chunk_size; i++) {
     x->overlap_add[i] = x->fftw_out[x->input_buffer->chunk_size + i];
-  }
-
-  if (free_required) {
-    free (signal_block);
   }
 }
 
@@ -221,9 +239,12 @@ void convolve_dynamic_add_to_output (t_convolve_dynamic_tilde * x, t_sample * ou
 void convolve_dynamic_tilde_dsp (t_convolve_dynamic_tilde * x, t_signal ** sp) {
   convolve_dynamic_free_internal (x);
 
+  x->block_size = sp[0]->s_n;
   //Prepare FFT and IFFT
-  x->irtf_length = (x->impulse_response_length + x->impulse_response_length - 1);
-  x->irtf_size = x->irtf_length * x->impulse_response_channels;
+  x->irtf_length = (x->block_size + x->block_size - 1);
+  x->blocks_per_irir = x->impulse_response_length / x->block_size + .5;
+  x->irtf_size = x->irtf_length * x->blocks_per_irir * x->impulse_response_channels;
+
   x->irtf = (double *) fftw_alloc_real (x->irtf_size);
 
   x->fftw_in = (double *) fftw_alloc_real (x->irtf_length);
@@ -232,42 +253,50 @@ void convolve_dynamic_tilde_dsp (t_convolve_dynamic_tilde * x, t_signal ** sp) {
   x->fftw_plan = fftw_plan_r2r_1d (x->irtf_length, x->fftw_in, x->fftw_out, FFTW_R2HC, FFTW_PATIENT);
   x->fftw_plan_inverse = fftw_plan_r2r_1d (x->irtf_length, x->fftw_in, x->fftw_out, FFTW_HC2R, FFTW_PATIENT);   //content x->fftw_in will be destroyed as out-of-place
 
-  //FFT for all (IRIR to IRTF)
+  //FFT for all (IRIR to _splitted_ IRTFs)
   //ATTENTION impulse_response contains interleaved data!
   for (int channel = 0; channel < x->impulse_response_channels; channel++) {
-    for (int i = 0; i < x->impulse_response_length; i++) {
-      x->fftw_in[i] = x->impulse_response[channel + i * x->impulse_response_channels];
-    }
-    //Zero-padding
-    for (int i = x->impulse_response_length; i < x->irtf_length; i++) {
-      x->fftw_in[i] = 0;
-    }
 
-    fftw_execute (x->fftw_plan);
+    for (int block = 0; block < x->blocks_per_irir; block++) {
+      for (int i = 0; i < x->block_size; i++) {
+        int index = channel + block * x->block_size + i * x->impulse_response_channels;
+        x->fftw_in[i] = index < x->impulse_response_size ? x->impulse_response[index] : 0;      //Zero padding, if IR is not divible without remainder
+      }
+      //Zero-padding
+      for (int i = x->block_size; i < x->irtf_length; i++) {
+        x->fftw_in[i] = 0;
+      }
 
-    for (int i = 0; i < x->irtf_length; i++) {
-      x->irtf[channel + i * x->impulse_response_channels] = x->fftw_out[i];
+      fftw_execute (x->fftw_plan);
+
+      for (int i = 0; i < x->irtf_length; i++) {
+        x->irtf[channel + block * x->block_size + i * x->impulse_response_channels] = x->fftw_out[i];
+      }
     }
   }
 
   //Allocate overlap-add buffer
-  x->overlap_add = (float *) malloc (sizeof (float) * (x->impulse_response_length));
+  x->overlap_add = (float *) malloc (sizeof (float) * (x->block_size));
 
   //Initialize crossfading filter: cos^2 from 0deg to 90deg
-  x->crossfading_filter = (float *) malloc (sizeof (float) * (x->impulse_response_length));
-  for (int i = 0; i < x->impulse_response_length; i++) {
+  x->crossfading_filter = (float *) malloc (sizeof (float) * (x->block_size));
+  for (int i = 0; i < x->block_size; i++) {
     float rad = (float) i / x->impulse_response_length * 90 * M_PI / 180;       //90deg to rad
     x->crossfading_filter[i] = cos (rad) * cos (rad);
   }
 
   //Buffers are allocated with a maximum of three times the INPUT block size
-  x->input_buffer = float_buffer_alloc (x->impulse_response_length * 3, x->impulse_response_length);
-  x->output_buffer = float_buffer_alloc (x->impulse_response_length * 3, sp[0]->s_n);
+  x->input_buffer = float_buffer_alloc (x->impulse_response_length * 3, x->block_size);
+  x->output_buffer = float_buffer_alloc (x->impulse_response_length * 3, x->block_size);
 
-  dsp_add (convolve_dynamic_tilde_perform, 4, x, sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
+  //Fill input buffer with zeroed chunks, thus partitioned convolution can be applied without considering not yet available input data for the first blocks.
+  for (int i = 0; i < x->blocks_per_irir - 1; i++) {
+    float data[x->block_size];
+    float_buffer_add_chunk (x->input_buffer, data, x->block_size);
+  }
+
   post ("convolve_dynamic~: number of impulse responses %d, impulse response length %d; sampling rate %d.", x->impulse_response_channels, x->impulse_response_length, (int) x->impulse_response_sample_rate);
-
-
+  dsp_add (convolve_dynamic_tilde_perform, 4, x, sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
 }
 
 void convolve_dynamic_tilde_free (t_convolve_dynamic_tilde * x) {
@@ -327,7 +356,7 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
   x->impulse_response_sample_rate = sfinfo.samplerate;
   x->impulse_response_channels = sfinfo.channels;
   x->impulse_response_length = sfinfo.frames;
-  
+
   if ((int) x->impulse_response_sample_rate != (int) sys_getsr ()) {
     error ("convolve_dynamic~: PureData's sampling rate (%d) and the sampling rate of IRs (%d).", (int) sys_getsr (), x->impulse_response_sample_rate);
     return NULL;
@@ -342,7 +371,6 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
     x->impulse_response_current = impulse_response_current;
   }
 
-  
   //Read IRs-file
   x->impulse_response = (float *) malloc (x->impulse_response_length * x->impulse_response_channels * sizeof (float));
   x->impulse_response_size = sf_readf_float (infile, x->impulse_response, x->impulse_response_length);
