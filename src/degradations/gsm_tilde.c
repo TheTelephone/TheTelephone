@@ -87,7 +87,7 @@ void gsm_add_to_outbuffer (t_gsm_tilde * x) {
 
 void gsm_packet_loss (t_gsm_tilde * x) {
   x->codec.drop_next_frame = true;
-  error ("gsm~: Packet-loss is not implemented.");
+  error ("gsm~: Packet loss is not implemented.");
 }
 
 void gsm_tilde_dsp (t_gsm_tilde * x, t_signal ** sp) {
@@ -120,6 +120,7 @@ void *gsm_tilde_new () {
 void gsm_tilde_setup (void) {
   gsm_tilde_class = class_new (gensym ("gsm~"), (t_newmethod) gsm_tilde_new, (t_method) gsm_tilde_free, sizeof (t_gsm_tilde), CLASS_DEFAULT, 0);
   class_addmethod (gsm_tilde_class, (t_method) gsm_tilde_dsp, gensym ("dsp"), 0);
+  class_addbang (gsm_tilde_class, gsm_packet_loss);
   CLASS_MAINSIGNALIN (gsm_tilde_class, t_gsm_tilde, float_inlet);
   class_sethelpsymbol (gsm_tilde_class, gensym ("gsm~"));
 }

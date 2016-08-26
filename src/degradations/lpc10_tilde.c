@@ -113,6 +113,7 @@ void *lpc10_tilde_new () {
 void lpc10_tilde_setup (void) {
   lpc10_tilde_class = class_new (gensym ("lpc10~"), (t_newmethod) lpc10_tilde_new, (t_method) lpc10_tilde_free, sizeof (t_lpc10_tilde), CLASS_DEFAULT, 0);
   class_addmethod (lpc10_tilde_class, (t_method) lpc10_tilde_dsp, gensym ("dsp"), 0);
+  class_addbang (lpc10_tilde_class, lpc10_packet_loss);
   CLASS_MAINSIGNALIN (lpc10_tilde_class, t_lpc10_tilde, float_inlet_unused);
   class_sethelpsymbol (lpc10_tilde_class, gensym ("lpc10~"));
 }

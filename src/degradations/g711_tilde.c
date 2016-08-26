@@ -147,7 +147,7 @@ void *g711_tilde_new (t_floatarg frame_size, t_floatarg packet_loss_concealment_
 void g711_tilde_setup (void) {
   g711_tilde_class = class_new (gensym ("g711~"), (t_newmethod) g711_tilde_new, (t_method) g711_tilde_free, sizeof (t_g711_tilde), CLASS_DEFAULT, A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod (g711_tilde_class, (t_method) g711_tilde_dsp, gensym ("dsp"), 0);
-  CLASS_MAINSIGNALIN (g711_tilde_class, t_g711_tilde, float_inlet_unused);
   class_addbang (g711_tilde_class, g711_packet_loss);
+  CLASS_MAINSIGNALIN (g711_tilde_class, t_g711_tilde, float_inlet_unused);
   class_sethelpsymbol (g711_tilde_class, gensym ("g711~"));
 }

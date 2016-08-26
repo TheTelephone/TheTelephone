@@ -176,5 +176,6 @@ void *g722_tilde_new (t_floatarg frame_size, t_floatarg packet_loss_concealment_
 void g722_tilde_setup (void) {
   g722_tilde_class = class_new (gensym ("g722~"), (t_newmethod) g722_tilde_new, (t_method) g722_tilde_free, sizeof (t_g722_tilde), CLASS_DEFAULT, A_DEFFLOAT, 0);
   class_addmethod (g722_tilde_class, (t_method) g722_tilde_dsp, gensym ("dsp"), 0);
+  class_addbang (g722_tilde_class, g722_packet_loss);
   CLASS_MAINSIGNALIN (g722_tilde_class, t_g722_tilde, float_inlet_unused);
 }

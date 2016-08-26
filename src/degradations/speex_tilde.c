@@ -155,7 +155,7 @@ void *speex_tilde_new () {
 void speex_tilde_setup (void) {
   speex_tilde_class = class_new (gensym ("speex~"), (t_newmethod) speex_tilde_new, (t_method) speex_tilde_free, sizeof (t_speex_tilde), CLASS_DEFAULT, 0);
   class_addmethod (speex_tilde_class, (t_method) speex_tilde_dsp, gensym ("dsp"), 0);
-  CLASS_MAINSIGNALIN (speex_tilde_class, t_speex_tilde, float_inlet_unused);
   class_addbang (speex_tilde_class, speex_packet_loss);
+  CLASS_MAINSIGNALIN (speex_tilde_class, t_speex_tilde, float_inlet_unused);
   class_sethelpsymbol (speex_tilde_class, gensym ("speex~"));
 }
