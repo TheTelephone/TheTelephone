@@ -21,7 +21,7 @@ Build procedure
 
 For [Ubuntu 16.04](http://releases.ubuntu.com/16.04/):
 ```bash
-sudo apt install puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeexdsp-dev libjson0-dev
+sudo apt install puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson0-dev
 ```
 
 ### Compile
