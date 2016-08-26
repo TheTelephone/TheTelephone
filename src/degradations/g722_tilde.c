@@ -151,13 +151,13 @@ void *g722_tilde_new (t_floatarg frame_size, t_floatarg packet_loss_concealment_
   }
 
   if (packet_loss_concealment_mode < 0 && packet_loss_concealment_mode > 1) {
-    error ("g722~: invalid packet loss concealment mode specified (%d). Using mode 0.", (int) frame_size);
+    error ("g722~: invalid packet loss concealment mode specified (%d). Using mode 0.", (int) packet_loss_concealment_mode);
     packet_loss_concealment_mode = 0;
   }
   x->packet_loss_concealment_mode = packet_loss_concealment_mode;
 
   if ((int) g722_decoding_mode != 0 && (int) g722_decoding_mode != 1 && (int) g722_decoding_mode != 2) {
-    error ("g722~: invalid g722 decoding mode specified (%d). Using mode 0.", (int) packet_loss_concealment_mode);
+    error ("g722~: invalid g722 decoding mode specified (%d). Using mode 0.", (int) g722_decoding_mode);
     g722_decoding_mode = 0;
   }
   x->g722_decoding_mode = g722_decoding_mode;
