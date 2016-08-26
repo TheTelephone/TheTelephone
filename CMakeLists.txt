@@ -30,11 +30,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/)
 
 #Dependencies
 INCLUDE (CheckLibraryExists)
-set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json m opus sndfile websockets)
+set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json m opus sndfile speex websockets)
 CHECK_LIBRARY_EXISTS(fftw3 fftw_execute "" HAVE_FFTW)
 CHECK_LIBRARY_EXISTS(gsm gsm_encode "" HAVE_GSM)
 CHECK_LIBRARY_EXISTS(opus opus_encode_float "" HAVE_OPUS)
 CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
+CHECK_LIBRARY_EXISTS(speex speex_encode "" HAVE_SPEEX)
 CHECK_LIBRARY_EXISTS(json json_tokener_parse "" HAVE_JSON)
 CHECK_LIBRARY_EXISTS(websockets lws_client_connect "" HAVE_WEBSOCKETS)
 
@@ -127,6 +128,15 @@ else()
   add_library(opus~ SHARED src/degradations/opus_tilde.c)
   target_link_libraries(opus~ resample opus)
 endif()
+
+#PD-External: SPEEX
+if(NOT HAVE_SPEEX)
+  message(WARNING "libspeexdsp not found: speex~ will not be build.")
+else()
+  add_library(speex~ SHARED src/degradations/speex_tilde.c)
+  target_link_libraries(speex~ resample speex)
+endif()
+
 
 #TESTING
 enable_testing()
