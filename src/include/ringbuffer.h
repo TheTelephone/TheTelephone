@@ -137,6 +137,28 @@ static bool float_buffer_has_chunk (float_buffer * buffer) {
   return buffer->number_elements >= buffer->chunk_size;
 }
 
+static bool float_buffer_has_chunk_n (float_buffer * buffer, unsigned int n) {
+  return buffer->number_elements >= buffer->chunk_size * n;
+}
+
+static void float_buffer_read_chunk_n (float_buffer * buffer, float **chunk, unsigned int size, unsigned int n, bool *manual_delete) {
+
+  unsigned int buffer_index = (buffer->start  + size * n) % buffer->size;
+
+  if (buffer->start + size * n > buffer_index) { 
+    *manual_delete = true;
+    float *cpx = (float *) malloc (sizeof (float) * size);
+    for (int i = 0; i < size; i++) {
+      cpx[i] = buffer->data[buffer_index];
+      buffer_index = (buffer_index + 1) % buffer->size;
+      *chunk = cpx;
+    }
+  } else {
+    *manual_delete = false;
+    *chunk = &buffer->data[buffer_index];
+  }
+}
+
 static void float_buffer_pop_chunk (float_buffer * buffer, float **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = true;
