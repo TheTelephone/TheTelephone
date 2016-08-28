@@ -139,7 +139,7 @@ static bool float_buffer_has_chunk (float_buffer * buffer) {
 
 static void float_buffer_pop_chunk (float_buffer * buffer, float **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
-    *manual_delete = 1;
+    *manual_delete = true;
     float *cpx = (float *) malloc (sizeof (float) * size);
     for (int i = 0; i < size; i++) {
       cpx[i] = buffer->data[buffer->start];
@@ -147,6 +147,7 @@ static void float_buffer_pop_chunk (float_buffer * buffer, float **chunk, unsign
       *chunk = cpx;
     }
   } else {
+    *manual_delete = false;
     *chunk = &buffer->data[buffer->start];
     buffer->start = (buffer->start + size) % buffer->size;
   }
@@ -206,7 +207,7 @@ static bool double_buffer_has_chunk (double_buffer * buffer) {
 
 static void double_buffer_pop_chunk (double_buffer * buffer, double **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
-    *manual_delete = 1;
+    *manual_delete = true;
     double *cpx = (double *) malloc (sizeof (double) * size);
     for (int i = 0; i < size; i++) {
       cpx[i] = buffer->data[buffer->start];
@@ -214,6 +215,7 @@ static void double_buffer_pop_chunk (double_buffer * buffer, double **chunk, uns
       *chunk = cpx;
     }
   } else {
+    *manual_delete = false;
     *chunk = &buffer->data[buffer->start];
     buffer->start = (buffer->start + size) % buffer->size;
   }
@@ -275,7 +277,7 @@ static bool short_buffer_has_chunk (short_buffer * buffer) {
 
 static void short_buffer_pop_chunk (short_buffer * buffer, short **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
-    *manual_delete = 1;
+    *manual_delete = true;
     short *cpx = (short *) malloc (sizeof (short) * size);
     for (int i = 0; i < size; i++) {
       cpx[i] = buffer->data[buffer->start];
@@ -283,6 +285,7 @@ static void short_buffer_pop_chunk (short_buffer * buffer, short **chunk, unsign
       *chunk = cpx;
     }
   } else {
+    *manual_delete = false;
     *chunk = &buffer->data[buffer->start];
     buffer->start = (buffer->start + size) % buffer->size;
   }
@@ -344,7 +347,7 @@ static bool int_buffer_has_chunk (int_buffer * buffer) {
 
 static void int_buffer_pop_chunk (int_buffer * buffer, int **chunk, unsigned int size, bool *manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
-    *manual_delete = 1;
+    *manual_delete = true;
     int *cpx = (int *) malloc (sizeof (int) * size);
     for (int i = 0; i < size; i++) {
       cpx[i] = buffer->data[buffer->start];
@@ -352,6 +355,7 @@ static void int_buffer_pop_chunk (int_buffer * buffer, int **chunk, unsigned int
       *chunk = cpx;
     }
   } else {
+    *manual_delete = false;
     *chunk = &buffer->data[buffer->start];
     buffer->start = (buffer->start + size) % buffer->size;
   }
