@@ -42,6 +42,20 @@ This can be overriden setting `CMAKE_INSTALL_PREFIX`.
 
 For further information about installing [externals](http://pdstatic.iem.at/externals-HOWTO/), please take a look [here](https://puredata.info/docs/faq/how-do-i-install-externals-and-help-files).
 
+### Documentation
+
+Documentation can be generated using [Doxygen](www.doxygen.org/).
+
+For [Ubuntu 16.04](http://releases.ubuntu.com/16.04/) install the following packages:
+```bash
+sudo apt install doxygen graphviz
+```
+
+Run:
+```bash
+cd TheTelephone && cmake . && make doc
+```
+
 License
 ---
 This project is licensed as [GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt) or later.
