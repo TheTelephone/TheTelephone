@@ -1,5 +1,5 @@
 /**
-@file delay.c
+@file delay_tilde.c
 @author Frank Haase, Dennis Guse
 @date 2016-08-16
 @license GPLv3 or later

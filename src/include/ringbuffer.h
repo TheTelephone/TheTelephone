@@ -1,5 +1,5 @@
 /**
-@file ringbuffer.c
+@file ringbuffer.h
 @author Frank Haase, Dennis Guse
 @date 2016-08-16
 @license GPLv3 or later

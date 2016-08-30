@@ -8,7 +8,7 @@ Puredata's sampling rate is used.
 ATTENTION: Should only be used for offline processing.
 
 Parameters:
-  writesfnow~ FILENAME #INLETs...
+  writesfnow~ FILENAME NumberOfInlets...
 
 Inlets:
   INLETx: 1 to 255

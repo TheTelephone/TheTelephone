@@ -1,5 +1,5 @@
 /**
-@file cpp_example_tilde.c
+@file cpp_example_tilde.cpp
 @author Dennis Guse, Frank Haase
 @date 2016-08-19
 @license GPLv3 or later

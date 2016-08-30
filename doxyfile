@@ -9,3 +9,5 @@ HAVE_DOT               = YES
 CALL_GRAPH             = YES
 RECURSIVE              = YES
 QUIET                  = YES
+
+ALIASES += "license=@par License:\n"
