@@ -68,7 +68,7 @@ set_target_properties(cpp_example~ PROPERTIES SUFFIX ".pd_linux")
 
 #PD-External: I/O
 if (NOT HAVE_SNDFILE)
-  message(FATAL_ERROR "libsndfile not found." )
+  message(WARNING "libsndfile not found: readsfnow~ and writesfnow~ will not be build." )
 else()
   add_library(readsfnow~ SHARED src/support/readsfnow_tilde.c)
   target_link_libraries(readsfnow~ sndfile)
@@ -135,7 +135,7 @@ endif()
 
 #PD-External: SPEEX
 if(NOT HAVE_SPEEX)
-  message(WARNING "libspeexdsp not found: speex~ will not be build.")
+  message(WARNING "libspeex not found: speex~ will not be build.")
 else()
   add_library(vad_speex~ SHARED src/signal-processing/vad_speex_tilde.c)
   target_link_libraries(vad_speex~ resample speexdsp)
