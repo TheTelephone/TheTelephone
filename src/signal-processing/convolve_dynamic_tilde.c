@@ -9,8 +9,9 @@ It provides dynamic convolution, i.e., the impulse response can be changed and c
 ATTENTION: Sampling rate of the set of impulse responses must be identical to PureData's.
 
 Parameters:
-  convolve_dynamic~ fileIR
+  convolve_dynamic~ fileIR initialHRIR
   fileIR is a MULTI-channel Wave-file containing the impulse responses.
+  initialHRIR is the index of the HRIR to be used initially.
 
 inlets:
   1x Float inlet: index of the impulse response to use (default: 0)
@@ -146,7 +147,7 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 
 
   //Check if IR needs to be changed
-  int next_response = (unsigned int) (x->impulse_response_next);
+  unsigned int next_response = (unsigned int) (x->impulse_response_next);
   if (!(0 <= next_response && next_response <= x->impulse_response_channels)) {
     error ("convolve_dynamic~: requested impulse response (%d) is not available; 0..%d are available.", next_response, x->impulse_response_channels);
     next_response = x->impulse_response_current;
@@ -313,6 +314,11 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
     error ("convolve_dynamic~: Not able to open input file %s. libsndfile reported: %s.\n", infilename, sf_strerror (NULL));
     return NULL;
   }
+  if (sfinfo.channels == 0) {
+    error ("convolve_dynamic~: Input file %s does not contain any channel.\n", infilename);
+    return NULL;
+  }
+  
   t_convolve_dynamic_tilde *x = (t_convolve_dynamic_tilde *) pd_new (convolve_dynamic_tilde_class);
   x->impulse_response_sample_rate = sfinfo.samplerate;
   x->impulse_response_channels = sfinfo.channels;
@@ -322,6 +328,16 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
     error ("convolve_dynamic~: PureData's sampling rate (%d) and the sampling rate of IRs (%d).", x->impulse_response_sample_rate, (int) sys_getsr ());
     return NULL;
   }
+
+  if (argc >= 2) {
+    unsigned int impulse_response_current = atom_getint(argv+1);
+    if (!(0 <= impulse_response_current && impulse_response_current <= x->impulse_response_channels)) {
+      error ("convolve_dynamic~: Requested impulse response %d is not available in %s; range is 0..%d.", impulse_response_current, infilename, x->impulse_response_channels);
+      impulse_response_current = 0;
+    }
+    x->impulse_response_current = impulse_response_current;
+  }
+
   
   //Read IRs-file
   x->impulse_response = (float *) malloc (x->impulse_response_length * x->impulse_response_channels * sizeof (float));
@@ -333,7 +349,7 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
   x->input_buffer = NULL;
   x->output_buffer = NULL;
 
-  post ("convolve_dynamic~: Opened %s with channels: %d, samplerate: %d, frames %d.", infilename, x->impulse_response_channels, x->impulse_response_sample_rate, x->impulse_response_length);
+  post ("convolve_dynamic~: Opened %s with channels: %d, samplerate: %d, frames %d, initial impulse response %d.", infilename, x->impulse_response_channels, x->impulse_response_sample_rate, x->impulse_response_length, x->impulse_response_current);
   return (void *) x;
 }
 

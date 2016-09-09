@@ -1,36 +1,37 @@
-#N canvas 825 411 1049 510 10;
-#X obj 386 375 convolve_dynamic~ hrirs_fabian.wav;
-#X obj 133 375 convolve_dynamic~ hrirs_fabian.wav;
-#X obj 134 166 noise~;
-#X obj 362 454 dac~;
-#X floatatom 340 114 5 0 0 0 - - -, f 5;
-#X msg 494 29 0;
-#X msg 549 55 45;
-#X floatatom 530 229 5 0 0 0 - - -, f 5;
-#X obj 494 100 + 0;
-#X msg 562 99 90;
-#X msg 542 135 135;
-#X text 422 227 Current angle:;
-#X text 422 227 Current angle:;
-#X text 44 166 The signal:;
-#X obj 187 340 + 0;
-#X obj 386 342 + 1;
-#X msg 492 159 180;
-#X msg 438 134 215;
-#X msg 419 99 270;
-#X obj 386 315 * 2;
-#X obj 134 247 *~ 0.2;
-#X obj 386 268 abs;
-#X msg 443 53 315;
-#X obj 386 287 mod 360;
-#X obj 386 250 - 360;
-#X obj 386 197 + 0;
-#X text 60 27 This demo does binaural synthesis using convolution.
+#N canvas 819 437 1049 510 10;
+#X obj 382 369 convolve_dynamic~ hrirs_fabian.wav;
+#X obj 129 369 convolve_dynamic~ hrirs_fabian.wav;
+#X obj 130 160 noise~;
+#X obj 358 448 dac~;
+#X floatatom 336 108 5 0 0 0 - - -, f 5;
+#X msg 490 23 0;
+#X msg 545 49 45;
+#X floatatom 526 223 5 0 0 0 - - -, f 5;
+#X obj 490 94 + 0;
+#X msg 558 93 90;
+#X msg 538 129 135;
+#X text 418 221 Current angle:;
+#X text 418 221 Current angle:;
+#X text 40 160 The signal:;
+#X obj 183 334 + 0;
+#X obj 382 336 + 1;
+#X msg 488 153 180;
+#X msg 434 128 215;
+#X msg 415 93 270;
+#X obj 382 309 * 2;
+#X obj 130 241 *~ 0.2;
+#X obj 382 262 abs;
+#X msg 439 47 315;
+#X obj 382 281 mod 360;
+#X obj 382 244 - 360;
+#X obj 382 191 + 0;
+#X text 56 21 This demo does binaural synthesis using convolution.
 The position of the sound source can be adjusted in real-time using
 the controls on the left., f 29;
-#X text 443 283 Note: the HRIRs in hrirs_fabian are counterclockwise
+#X text 439 277 Note: the HRIRs in hrirs_fabian are counterclockwise
 starting 0deg (north). Left channel even \, right channel odd., f
 33;
+#X obj 274 22 loadbang;
 #X connect 0 0 3 1;
 #X connect 1 0 3 0;
 #X connect 2 0 20 0;
@@ -55,3 +56,4 @@ starting 0deg (north). Left channel even \, right channel odd., f
 #X connect 24 0 21 0;
 #X connect 25 0 7 0;
 #X connect 25 0 24 0;
+#X connect 28 0 5 0;
