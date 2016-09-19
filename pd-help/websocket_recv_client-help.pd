@@ -1,13 +1,13 @@
-#N canvas 794 533 838 430 12;
+#N canvas 791 546 838 430 12;
 #X text 343 129 Arguments:;
 #X text 339 224 Output:;
-#X text 40 5 websocket_recv - connects to a websocket server and waits
-for JSON message.;
 #X text 37 57 JSON message must be form [ key: value ]. On received
 JSON message a message is sent either as FLOAT (value is a number)
 or as SYMBOL (value is string). On connection issues \, a reconnect
 is conducted. Reconnect delay is set by the #define RECONNECT_DELAY.
 , f 67;
-#X obj 39 149 websocket_recv localhost 8080 / key;
 #X text 352 147 1: FQDN/IP 2: Port 3: Path 4: JSON message key;
 #X text 340 243 - outlet: received value as FLOAT or SYMBOL;
+#X obj 39 175 websocket_recv_client localhost 8080 / key;
+#X text 40 5 websocket_recv_client - connects to a websocket server
+and waits for JSON message.;
