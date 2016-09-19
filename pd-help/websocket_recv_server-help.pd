@@ -1,0 +1,14 @@
+#N canvas 323 319 838 430 12;
+#X text 338 139 Arguments:;
+#X text 339 224 Output:;
+#X text 37 62 JSON message must be form [ key: value ]. On received
+JSON message a message is sent either as FLOAT (value is a number)
+or as SYMBOL (value is string). On connection issues \, a reconnect
+is conducted. Reconnect delay is set by the #define RECONNECT_DELAY.
+, f 67;
+#X text 340 243 - outlet: received value as FLOAT or SYMBOL;
+#X obj 39 149 websocket_recv_server 8080 key;
+#X text 34 18 websocket_recv_server - starts a websocket server and
+waits for JSON message.;
+#X text 347 180 2: JSON message with key;
+#X text 347 157 1: Port, f 8;

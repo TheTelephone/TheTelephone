@@ -91,6 +91,9 @@ if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS)
 else()
 	add_library(websocket_recv SHARED src/connectivity/websocket_recv.c)
 	target_link_libraries(websocket_recv websockets json)
+	
+	add_library(websocket_recv_server SHARED src/connectivity/websocket_recv_server.c)
+	target_link_libraries(websocket_recv_server websockets json)
 endif()
 
 #PD-External: G.711
