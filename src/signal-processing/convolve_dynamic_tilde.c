@@ -325,7 +325,7 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
   x->impulse_response_length = sfinfo.frames;
   
   if ((int) x->impulse_response_sample_rate != (int) sys_getsr ()) {
-    error ("convolve_dynamic~: PureData's sampling rate (%d) and the sampling rate of IRs (%d).", x->impulse_response_sample_rate, (int) sys_getsr ());
+    error ("convolve_dynamic~: PureData's sampling rate (%d) and the sampling rate of IRs (%d).", (int) sys_getsr (), x->impulse_response_sample_rate);
     return NULL;
   }
 
