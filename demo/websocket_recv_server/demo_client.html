@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TheTelephone - Websocket server demo client</title>
+    <script type="text/javascript">
+            var connection = new WebSocket("ws://localhost:8080");
+            //connection.onmessage //We ignore incoming messages
+            connection.onerror = function() {document.write("Connection to Websocket server failed.<br>");};
+            connection.onclose = function() {document.write("Connection to Websocket server closed.");};
+            
+            function send(value) {
+                var message = '{"osc":"' + value + '"}'
+                console.log("Sending message: " + value);
+                connection.send(message);
+            };
+    </script>
+</head>
+<body>
+    <form>
+        <input id="osc1" type="radio" name="group" onchange="send(this.id)">
+        <input id="osc2" type="radio" name="group" onchange="send(this.id)">
+        <input id="osc3" type="radio" name="group" onchange="send(this.id)">
+    </form>
+</body>
+</html>
