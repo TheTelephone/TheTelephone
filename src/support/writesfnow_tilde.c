@@ -25,6 +25,7 @@ Technical documentation:
 #include <stdlib.h>
 #include <string.h>
 #include <sndfile.h>
+#include <unistd.h>
 
 static t_class *writesfnow_tilde_class;
 
@@ -136,7 +137,9 @@ void *writesfnow_tilde_new (t_symbol * s, int argc, t_atom * argv) {
     x->inlet_additional[i] = inlet_new (&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
   }
 
-  post ("writesfnow~: Going to write to %s with %d channels.", x->filename, x->inlet_count);
+  char pwd[512];
+  getcwd(pwd, 512);
+  post ("writesfnow~: Going to write to %s/%s with %d channels.", pwd, x->filename, x->inlet_count);
   return (void *) x;
 }
 

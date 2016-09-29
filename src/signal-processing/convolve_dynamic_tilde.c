@@ -44,6 +44,7 @@ Implementation details:
 #include <stdbool.h>
 #include <fftw3.h>
 #include <math.h>
+#include <unistd.h>
 #include "ringbuffer.h"
 
 #ifndef M_PI
@@ -311,7 +312,10 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
   memset (&sfinfo, 0, sizeof (sfinfo));
 
   if ((infile = sf_open (infilename, SFM_READ, &sfinfo)) == NULL) {
-    error ("convolve_dynamic~: Not able to open input file %s. libsndfile reported: %s.\n", infilename, sf_strerror (NULL));
+    char pwd[512];
+    getcwd(pwd, 512);
+
+    error ("convolve_dynamic~: Not able to open input file %s/%s. libsndfile reported: %s.\n", pwd, infilename, sf_strerror (NULL));
     return NULL;
   }
   if (sfinfo.channels == 0) {

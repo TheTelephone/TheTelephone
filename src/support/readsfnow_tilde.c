@@ -29,6 +29,7 @@ Methods:
 #include <sndfile.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define MAX_BUFFER 8172000
 
@@ -147,7 +148,10 @@ void *readsfnow_tilde_new (t_symbol * s, int argc, t_atom * argv) {
   memset (&sfinfo, 0, sizeof (sfinfo));
 
   if ((infile = sf_open (x->filename, SFM_READ, &sfinfo)) == NULL) {
-    error ("readsfnow~ (%s): Not able to open input file: %s.", x->filename, sf_strerror (NULL));
+    char pwd[512];
+    getcwd(pwd, 512);
+
+    error ("readsfnow~ (%s): Not able to open input file %s/%s: %s.", x->filename, pwd, x->filename, sf_strerror (NULL));
     return NULL;
   }
 
