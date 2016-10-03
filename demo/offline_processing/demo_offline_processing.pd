@@ -1,0 +1,10 @@
+#N canvas 214 335 414 300 10;
+#X obj 115 132 writesfnow~ output.wav 2;
+#X obj 110 44 readsfnow~ input.wav;
+#X obj 25 23 loadbang;
+#X msg 25 54 \; pd dsp 1;
+#X msg 296 132 \; pd quit;
+#X connect 1 0 0 1;
+#X connect 1 1 0 0;
+#X connect 1 2 4 0;
+#X connect 2 0 3 0;
