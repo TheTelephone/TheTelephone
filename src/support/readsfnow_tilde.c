@@ -78,7 +78,7 @@ t_int *readsfnow_tilde_perform (t_int * w) {
       }
     }
 
-    x->current_frame_index += n * x->channel_count;
+    x->current_frame_index += n;
 
     if (reached_eof) {
       post ("readsfnow~ (%s): Reached EOF.", x->filename);
