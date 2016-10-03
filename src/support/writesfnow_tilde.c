@@ -77,6 +77,8 @@ void writesfnow_tilde_dsp (t_writesfnow_tilde * x, t_signal ** sp) {
     error ("writesfnow~: Could not open file %s. Nothing will be written.", x->filename);
     return;
   }
+  sf_command (x->file, SFC_SET_UPDATE_HEADER_AUTO, NULL, SF_TRUE) ;
+
 
   t_int signal_ref[2 + x->inlet_count + 1];
 
