@@ -7,8 +7,9 @@
 vad_speex~ applies the _voice activity detection_ algorithm of [Speex](http://www.speex.org/).
 
 Parameters:
-  vad_speex~ FRAME_SIZE
-  FRAME_SIZE in  samples: 80, 160, 240
+  vad_speex~ FRAME_SIZE SAMPLE_RATE
+  FRAME_SIZE in samples: 80, 160, 240, 320
+  SAMPLE_RATE in  Hz: 8000, 16000
 
 Inlets:
   1x Audio inlet
@@ -107,13 +108,13 @@ void vad_speex_tilde_free (t_vad_speex_tilde * x) {
 void *vad_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate) {
   t_vad_speex_tilde *x = (t_vad_speex_tilde *) pd_new (vad_speex_tilde_class);
 
-  if ((int) frame_size != 80 && (int) frame_size != 160 && (int) frame_size != 240) {
+  if ((int) frame_size != 80 && (int) frame_size != 160 && (int) frame_size != 240 && (int) frame_size != 320) {
     error ("vad_speex~: invalid frame size specified (%d). Using 80.", (int) frame_size);
     frame_size = 80;
   }
 
   if ((int) sample_rate != 8000 && (int) sample_rate != 16000) {
-    error ("opus~: invalid sample rate specified (%d). Using 8000.", (int) sample_rate);
+    error ("vad_speex~: invalid sample rate specified (%d). Using 8000.", (int) sample_rate);
     sample_rate = 8000;
   }
 
