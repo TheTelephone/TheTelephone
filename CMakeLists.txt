@@ -142,6 +142,9 @@ if(NOT HAVE_SPEEX)
 else()
   add_library(vad_speex~ SHARED src/signal-processing/vad_speex_tilde.c)
   target_link_libraries(vad_speex~ resample speexdsp)
+  
+  add_library(ns_speex~ SHARED src/signal-processing/ns_speex_tilde.c)
+  target_link_libraries(ns_speex~ resample speexdsp)
 
   add_library(speex~ SHARED src/degradations/speex_tilde.c)
   target_link_libraries(speex~ resample speex)
