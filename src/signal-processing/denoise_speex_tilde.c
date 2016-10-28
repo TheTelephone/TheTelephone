@@ -143,7 +143,8 @@ void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_
 }
 
 void denoise_speex_tilde_setup (void) {
-  denoise_speex_tilde_class = class_new (gensym ("denoise_speex~"), (t_newmethod) denoise_speex_tilde_new, (t_method) denoise_speex_tilde_free, sizeof(t_denoise_speex_tilde), CLASS_DEFAULT, A_DEFFLOAT, A_DEFFLOAT, A_DEFFLOAT, 0);
+  denoise_speex_tilde_class = class_new (gensym ("denoise_speex~"), (t_newmethod) denoise_speex_tilde_new, (t_method) denoise_speex_tilde_free, sizeof(t_denoise_speex_tilde), CLASS_DEFAULT, 
+  A_DEFFLOAT, A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod (denoise_speex_tilde_class, (t_method) denoise_speex_tilde_dsp, gensym ("dsp"), 0);
   CLASS_MAINSIGNALIN (denoise_speex_tilde_class, t_denoise_speex_tilde, float_inlet);
   class_sethelpsymbol (denoise_speex_tilde_class, gensym ("denoise_speex~"));
