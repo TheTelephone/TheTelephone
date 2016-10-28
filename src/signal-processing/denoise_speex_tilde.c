@@ -21,10 +21,7 @@ Outlets:
 */
 
 #include <m_pd.h>
-// #include <limits.h>
-// #include <stdbool.h>
-// #include <string.h>
-// #include "ringbuffer.h"
+#include <limits.h>
 #include "generic_codec.h"
 
 #include "speex/speex.h"
