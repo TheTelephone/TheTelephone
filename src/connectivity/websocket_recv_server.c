@@ -32,7 +32,7 @@ Outlets:
 #include <syslog.h>
 #include <signal.h>
 #include <libwebsockets.h>
-#include <json/json.h>
+#include <json-c/json.h>
 
 static t_class *websocket_recv_server_class;
 

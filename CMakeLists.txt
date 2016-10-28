@@ -22,9 +22,18 @@ endif()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
-#Default installation target is: ~/pd-externals
+#Setting default installation target
 if(NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/pd-externals")
+  if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+    set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/pd-externals")
+  endif()
+  if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/Library/Pd")
+  endif()
+  if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    set(CMAKE_INSTALL_PREFIX "$ENV{AppData}/Pd") #ATTENTION: untested
+  endif()
+
   message("Setting install directory to ${CMAKE_INSTALL_PREFIX} - to override #set CMAKE_INSTALL_PREFIX.")
 endif()
 
@@ -35,13 +44,19 @@ install(DIRECTORY pd-help/ DESTINATION ${CMAKE_INSTALL_PREFIX})
 #Dependencies
 INCLUDE (CheckLibraryExists)
 set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json m opus sndfile speex websockets)
-CHECK_LIBRARY_EXISTS(fftw3 fftw_execute "" HAVE_FFTW)
-CHECK_LIBRARY_EXISTS(gsm gsm_encode "" HAVE_GSM)
-CHECK_LIBRARY_EXISTS(opus opus_encode_float "" HAVE_OPUS)
-CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
-CHECK_LIBRARY_EXISTS(speex speex_encode "" HAVE_SPEEX)
-CHECK_LIBRARY_EXISTS(json json_tokener_parse "" HAVE_JSON)
-CHECK_LIBRARY_EXISTS(websockets lws_client_connect "" HAVE_WEBSOCKETS)
+find_library(HAVE_FFTW fftw3)
+find_library(HAVE_GSM gsm)
+find_library(HAVE_OPUS opus)
+find_library(HAVE_SNDFILE sndfile)
+find_library(HAVE_SPEEX speex)
+find_library(HAVE_JSON json-c)
+find_library(HAVE_WEBSOCKETS websockets)
+
+INCLUDE (CheckIncludeFiles)
+CHECK_INCLUDE_FILES(m_pd.h HAVE_PD_H)
+if(NOT HAVE_PD_H)
+  message(FATAL_ERROR "PureData's header file <<m_pd.h>> could not be found: cannot build.")
+endif()
 
 #Source folders
 add_subdirectory(src/support)
@@ -54,10 +69,18 @@ include_directories(src/include)
 add_library(audiorouting~ SHARED src/support/audiorouting_tilde.c)
 target_link_libraries(audiorouting~ m)
 
-add_library(benchmark_delay~ SHARED src/support/benchmark_delay_tilde.c)
-target_link_libraries(benchmark_delay~ m)
+if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+  message(WARNING "CLOCK_MONOTONIC not available (Linux/FreeBSD only): benchmark_delay~ will not be build.")
+elseif()
+  add_library(benchmark_delay~ SHARED src/support/benchmark_delay_tilde.c)
+  target_link_libraries(benchmark_delay~ m)
+endif()
 
-add_library(exit SHARED src/support/exit.c)
+if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  message(WARNING "sys_exit() not available (Linux only): exit will not be build.")
+elseif()
+  add_library(exit SHARED src/support/exit.c)
+endif()
 
 add_library(delay~ SHARED src/degradations/delay_tilde.c)
 
@@ -87,13 +110,13 @@ endif()
 
 #PD-External: connectivity
 if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS)
-	message(WARNING "libjson or libwebsockets not found: websocket_recv_client and websocket_recv_server will not be build.")
+	message(WARNING "libjson-c or libwebsockets not found: websocket_recv_client and websocket_recv_server will not be build.")
 else()
 	add_library(websocket_recv_client SHARED src/connectivity/websocket_recv_client.c)
-	target_link_libraries(websocket_recv_client websockets json)
-	
+	target_link_libraries(websocket_recv_client websockets json-c)
+
 	add_library(websocket_recv_server SHARED src/connectivity/websocket_recv_server.c)
-	target_link_libraries(websocket_recv_server websockets json)
+	target_link_libraries(websocket_recv_server websockets json-c)
 endif()
 
 #PD-External: G.711
@@ -154,16 +177,31 @@ add_subdirectory(tests)
 add_custom_target(test-verbose COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
 
 ##TESTING: unresolved symbols
-add_executable(test_undefined_symbols tests/test_undefined_symbols.c)
+add_executable(test_undefined_symbols EXCLUDE_FROM_ALL tests/test_undefined_symbols.c)
 target_link_libraries(test_undefined_symbols dl ${CMAKE_REQUIRED_LIBRARIES})
 
+#Compiler-specific settings
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
   set_property(TARGET ${target_name} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,-export-dynamic")
+
+  set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS} -undefined dynamic_lookup")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
   set_property(TARGET ${target_name} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--export-dynamic")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
   message(FATAL_ERROR "For compiler <<Intel>> the flag for exporting symbols is not set." )
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+  message(FATAL_ERROR "For compiler <<MSVC>> the flag for exporting symbols is not set." )
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  set_property(TARGET ${target_name} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,-export-dynamic")
+
+  set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -undefined dynamic_lookup")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  set_property(TARGET ${target_name} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--export-dynamic")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+  message(FATAL_ERROR "For compiler <<Intel>> the flag for exporting symbols is not set." )
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   message(FATAL_ERROR "For compiler <<MSVC>> the flag for exporting symbols is not set." )
 endif()
 

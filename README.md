@@ -5,8 +5,8 @@ This project extends [PureData](https://puredata.info/) to build a _telephone si
 
 This includes:
 
-* simulation of [Voice-over-IP](https://en.wikipedia.org/wiki/Voice_over_IP) degradations (i.&thinsp;e., coding, compression, and network degradations), 
-* standardized degradations of the speech signal (e.&thinsp;g., [MNRU](https://en.wikipedia.org/wiki/Modulated_Noise_Reference_Unit) and resampling), and 
+* simulation of [Voice-over-IP](https://en.wikipedia.org/wiki/Voice_over_IP) degradations (i.&thinsp;e., coding, compression, and network degradations),
+* standardized degradations of the speech signal (e.&thinsp;g., [MNRU](https://en.wikipedia.org/wiki/Modulated_Noise_Reference_Unit) and resampling), and
 * extended signal processing (e.&thinsp;g., voice activity detection).
 
 Moreover, [PureData](https://puredata.info/) is extended with the following features:
@@ -19,10 +19,17 @@ Build procedure
 ---
 ### Install dependencies
 
-For [Ubuntu 16.04](http://releases.ubuntu.com/16.04/):
+For [Ubuntu 16.10](http://releases.ubuntu.com/16.10/):
 ```bash
-sudo apt install puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson0-dev
+sudo apt install build-essential cmake puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson-c-dev
 ```
+
+For [MacOS](www.apple.com/macos/) using [Homebrew](http://brew.sh):
+1. Install [PureData](https://puredata.info/docs/faq/macosx)
+2. Install [`m_pd.h`](https://github.com/pure-data/pure-data/blob/master/src/m_pd.h) into the search path (ATTENTION: use the exact version of your [PureData](https://puredata.info/)); most recent: `curl https://raw.githubusercontent.com/pure-data/pure-data/master/src/m_pd.h
+ > /usr/local/include/m_pd.h`
+3. Install [Homebrew](http://brew.sh)
+4. `brew install cmake libsndfile libresample fftw libwebsockets opus-tools libgsm speex json-c`
 
 ### Compile
 
