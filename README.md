@@ -25,9 +25,9 @@ sudo apt install build-essential cmake puredata-dev libsndfile-dev libresample-d
 ```
 
 For [MacOS](www.apple.com/macos/) using [Homebrew](http://brew.sh):
+
 1. Install [PureData](https://puredata.info/docs/faq/macosx)
-2. Install [`m_pd.h`](https://github.com/pure-data/pure-data/blob/master/src/m_pd.h) into the search path (ATTENTION: use the exact version of your [PureData](https://puredata.info/)); most recent: `curl https://raw.githubusercontent.com/pure-data/pure-data/master/src/m_pd.h
- > /usr/local/include/m_pd.h`
+2. Make sure [`m_pd.h`](https://github.com/pure-data/pure-data/blob/master/src/m_pd.h) is in your path (Must match your [PD](https://puredata.info/) version). To grab the most recent, run: `curl https://raw.githubusercontent.com/pure-data/pure-data/master/src/m_pd.h > /usr/local/include/m_pd.h`
 3. Install [Homebrew](http://brew.sh)
 4. `brew install cmake libsndfile libresample fftw libwebsockets opus-tools libgsm speex json-c`
 
