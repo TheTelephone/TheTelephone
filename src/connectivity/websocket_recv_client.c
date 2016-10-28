@@ -30,7 +30,7 @@ Outlets:
 #include <syslog.h>
 #include <signal.h>
 #include <libwebsockets.h>
-#include <json/json.h>
+#include <json-c/json.h>
 
 #define RECONNECT_DELAY 0.5       //in seconds
 

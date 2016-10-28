@@ -110,13 +110,13 @@ endif()
 
 #PD-External: connectivity
 if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS)
-	message(WARNING "libjson or libwebsockets not found: websocket_recv_client and websocket_recv_server will not be build.")
+	message(WARNING "libjson-c or libwebsockets not found: websocket_recv_client and websocket_recv_server will not be build.")
 else()
 	add_library(websocket_recv_client SHARED src/connectivity/websocket_recv_client.c)
-	target_link_libraries(websocket_recv_client websockets json)
+	target_link_libraries(websocket_recv_client websockets json-c)
 
 	add_library(websocket_recv_server SHARED src/connectivity/websocket_recv_server.c)
-	target_link_libraries(websocket_recv_server websockets json)
+	target_link_libraries(websocket_recv_server websockets json-c)
 endif()
 
 #PD-External: G.711
