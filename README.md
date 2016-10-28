@@ -19,9 +19,9 @@ Build procedure
 ---
 ### Install dependencies
 
-For [Ubuntu 16.04](http://releases.ubuntu.com/16.04/):
+For [Ubuntu 16.10](http://releases.ubuntu.com/16.10/):
 ```bash
-sudo apt install puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson0-dev
+sudo apt install build-essential cmake puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson-c-dev
 ```
 
 For [MacOS](www.apple.com/macos/) using [Homebrew](http://brew.sh):

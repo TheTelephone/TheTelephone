@@ -44,13 +44,13 @@ install(DIRECTORY pd-help/ DESTINATION ${CMAKE_INSTALL_PREFIX})
 #Dependencies
 INCLUDE (CheckLibraryExists)
 set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json m opus sndfile speex websockets)
-CHECK_LIBRARY_EXISTS(fftw3 fftw_execute "" HAVE_FFTW)
-CHECK_LIBRARY_EXISTS(gsm gsm_encode "" HAVE_GSM)
-CHECK_LIBRARY_EXISTS(opus opus_encode_float "" HAVE_OPUS)
-CHECK_LIBRARY_EXISTS(sndfile sf_open "" HAVE_SNDFILE)
-CHECK_LIBRARY_EXISTS(speex speex_encode "" HAVE_SPEEX)
-CHECK_LIBRARY_EXISTS(json json_tokener_parse "" HAVE_JSON)
-CHECK_LIBRARY_EXISTS(websockets lws_client_connect "" HAVE_WEBSOCKETS)
+find_library(HAVE_FFTW fftw3)
+find_library(HAVE_GSM gsm)
+find_library(HAVE_OPUS opus)
+find_library(HAVE_SNDFILE sndfile)
+find_library(HAVE_SPEEX speex)
+find_library(HAVE_JSON json-c)
+find_library(HAVE_WEBSOCKETS websockets)
 
 INCLUDE (CheckIncludeFiles)
 CHECK_INCLUDE_FILES(m_pd.h HAVE_PD_H)
@@ -110,13 +110,13 @@ endif()
 
 #PD-External: connectivity
 if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS)
-	message(WARNING "libjson or libwebsockets not found: websocket_recv_client and websocket_recv_server will not be build.")
+	message(WARNING "libjson-c or libwebsockets not found: websocket_recv_client and websocket_recv_server will not be build.")
 else()
 	add_library(websocket_recv_client SHARED src/connectivity/websocket_recv_client.c)
-	target_link_libraries(websocket_recv_client websockets json)
+	target_link_libraries(websocket_recv_client websockets json-c)
 
 	add_library(websocket_recv_server SHARED src/connectivity/websocket_recv_server.c)
-	target_link_libraries(websocket_recv_server websockets json)
+	target_link_libraries(websocket_recv_server websockets json-c)
 endif()
 
 #PD-External: G.711
