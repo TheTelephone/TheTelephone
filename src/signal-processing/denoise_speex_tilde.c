@@ -34,7 +34,7 @@ static t_class *denoise_speex_tilde_class;
 
 typedef struct _denoise_speex_tilde {
   t_object x_obj;
-  
+
   t_int max_noise_attenuation;
 
   t_float float_inlet;
@@ -55,7 +55,7 @@ t_int *denoise_speex_tilde_perform (t_int * w) {
   int n = (int) (w[4]);
 
   generic_codec_resample_to_internal (&x->codec, n, in);
-  
+
   if (float_buffer_has_chunk (x->codec.ringbuffer_input)) {
     denoise_speex_add_to_outbuffer (x);
   }
@@ -63,7 +63,7 @@ t_int *denoise_speex_tilde_perform (t_int * w) {
   if (float_buffer_has_chunk (x->codec.ringbuffer_output)) {
     generic_codec_to_outbuffer (&x->codec, out);
   }
-  
+
   return (w + 5);
 }
 
@@ -73,7 +73,7 @@ void denoise_speex_add_to_outbuffer (t_denoise_speex_tilde * x) {
   float_buffer_pop_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
 
   short raw[x->codec.ringbuffer_input->chunk_size];
-  
+
   for (int i = 0; i < x->codec.ringbuffer_input->chunk_size; i++) {
     raw[i] = SHRT_MAX * frame[i];
   }
@@ -85,7 +85,7 @@ void denoise_speex_add_to_outbuffer (t_denoise_speex_tilde * x) {
   }
 
   generic_codec_resample_to_external (&x->codec, x->codec.ringbuffer_input->chunk_size, frame);
-  
+
   if (free_required) {
     free (frame);
   }
@@ -129,7 +129,7 @@ void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_
     error ("denoise_speex~: max. noise attenuation not specified or not in range <-100,-1>. Using -15.");
     max_noise_attenuation = -15;
   }
-  
+
   x->speex_preprocess_state = NULL;
   x->max_noise_attenuation = max_noise_attenuation;
 
@@ -143,8 +143,7 @@ void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_
 }
 
 void denoise_speex_tilde_setup (void) {
-  denoise_speex_tilde_class = class_new (gensym ("denoise_speex~"), (t_newmethod) denoise_speex_tilde_new, (t_method) denoise_speex_tilde_free, sizeof(t_denoise_speex_tilde), CLASS_DEFAULT, 
-  A_DEFFLOAT, A_DEFFLOAT, A_DEFFLOAT, 0);
+  denoise_speex_tilde_class = class_new (gensym ("denoise_speex~"), (t_newmethod) denoise_speex_tilde_new, (t_method) denoise_speex_tilde_free, sizeof (t_denoise_speex_tilde), CLASS_DEFAULT, A_DEFFLOAT, A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod (denoise_speex_tilde_class, (t_method) denoise_speex_tilde_dsp, gensym ("dsp"), 0);
   CLASS_MAINSIGNALIN (denoise_speex_tilde_class, t_denoise_speex_tilde, float_inlet);
   class_sethelpsymbol (denoise_speex_tilde_class, gensym ("denoise_speex~"));
