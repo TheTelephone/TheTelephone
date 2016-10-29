@@ -1,6 +1,6 @@
 /**
 @file denoise_speex_tilde.c
-@author Dennis Guse, Frank Haase, Michal Soloducha
+@author Michal Soloducha, Dennis Guse, Frank Haase
 @date 2016-10-21
 @license GPLv3 or later
 
@@ -97,7 +97,6 @@ void denoise_speex_tilde_dsp (t_denoise_speex_tilde * x, t_signal ** sp) {
 
   int denoise_enabled = 1;
   speex_preprocess_ctl (x->speex_preprocess_state, SPEEX_PREPROCESS_SET_DENOISE, &denoise_enabled);
-
   speex_preprocess_ctl (x->speex_preprocess_state, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &x->max_noise_attenuation);
 
   generic_codec_dsp_add (&x->codec, sp[0]->s_n, x, denoise_speex_tilde_perform, sp);
@@ -123,7 +122,7 @@ void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_
   }
 
   if ((int) max_noise_attenuation > -1 && (int) max_noise_attenuation < -100) {
-    error ("denoise_speex~: max. noise attenuation not specified or not in range <-100,-1>. Using -15.");
+    error ("denoise_speex~: max. noise attenuation not specified or not in range <-100,-1>. Using -15db.");
     max_noise_attenuation = -15;
   }
 
