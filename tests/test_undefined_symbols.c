@@ -13,6 +13,10 @@ Usage:
 */
 
 #include <dlfcn.h>
+#include <dirent.h>
+#include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -20,6 +24,8 @@ Usage:
 #include <string.h>
 
 //Symbols provided by Puredata's API
+void atom_getint(void) {
+}
 void atom_getintarg(void) {
 }
 void atom_getfloat(void) {
@@ -97,27 +103,51 @@ void sys_exit(void) {
 
 //Code
 int main (int argc, char *argv[]) {
-  if (argc < 2) {
-    printf ("Usage:\n  %s PATH1 PATH2 ... PATHn\n", argv[0]);
+  if (argc != 2) {
+    printf ("Usage:\n %s DIRECTORY\n", argv[0]);
     return -1;
   }
-  //Test all shared-objects
-  void *dlobj;
-  int failed_to_load = 0;
 
-  for (int i = 1; i < argc; i++) {
-    dlobj = dlopen (argv[i], RTLD_NOW);
-    if (dlobj == NULL) {
-      fprintf (stderr, "Testing %s: failed for reason '%s'\n", argv[i], dlerror ());
-      failed_to_load++;
-    } else {
-      printf ("Testing %s: ok\n", argv[i]);
-      dlclose (dlobj);
-    }
+  //Test all shared libraries in path
+  DIR *dir;
+  struct dirent *dir_entry;
+
+  if ((dir = opendir (argv[1])) == NULL) {
+    //perror ("Could not open the directory %s.", argv[1]);
+    return EXIT_FAILURE;
   }
 
+  void *dlobj;
+  unsigned int failed_to_load = 0;
+  unsigned int test_counter = 1;
+
+  char dir_entry_full[PATH_MAX];
+  char dir_entry_full_absolute[PATH_MAX];
+  struct stat path_stat;
+
+  while ((dir_entry = readdir (dir)) != NULL) {
+    sprintf(dir_entry_full, "%s/%s", argv[1], dir_entry->d_name);
+    realpath(dir_entry_full, dir_entry_full_absolute);
+
+    stat(dir_entry_full, &path_stat);
+    if (!S_ISREG(path_stat.st_mode)) {
+      continue;
+    }
+
+    dlobj = dlopen (dir_entry_full, RTLD_NOW);
+    if (dlobj == NULL) {
+      fprintf (stderr, "Testing %s: failed for reason '%s'\n", dir_entry_full, dlerror ());
+      failed_to_load++;
+    } else {
+      printf ("Testing %s: ok\n", dir_entry_full);
+      dlclose (dlobj);
+    }
+    test_counter++;
+  }
+  closedir (dir);
+
   if (failed_to_load > 0) {
-    fprintf (stderr, "%d of %d could not be loaded.\n", failed_to_load, argc - 1);
+    fprintf (stderr, "%d of %d could not be loaded.\n", failed_to_load, test_counter);
     return failed_to_load;
   }
 

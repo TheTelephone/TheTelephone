@@ -28,6 +28,7 @@ $Log: f2c.h,v $
 #define F2C_INCLUDE
 
 #include "lpc10.h"
+#include <stdlib.h>
 
 /*typedef long int integer;*/
 /*typedef INT32 integer;*/
@@ -180,7 +181,6 @@ struct Namelist {
 	};
 typedef struct Namelist Namelist;
 
-#define abs(x) ((x) >= 0 ? (x) : -(x))
 #define dabs(x) (doublereal)abs(x)
 #define min(a,b) ((a) <= (b) ? (a) : (b))
 #define max(a,b) ((a) >= (b) ? (a) : (b))
