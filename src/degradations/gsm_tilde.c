@@ -25,7 +25,7 @@ Outlets:
 #include "ringbuffer.h"
 #include "generic_codec.h"
 
-#include <gsm/gsm.h>
+#include <gsm.h>
 
 static t_class *gsm_tilde_class;
 
