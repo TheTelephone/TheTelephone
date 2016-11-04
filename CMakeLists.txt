@@ -5,29 +5,20 @@ project(TheTelephone)
 if(NOT CMAKE_VERSION VERSION_LESS "3.0")
   cmake_policy(SET CMP0037 OLD)
 endif()
+
 #Set prefix and suffix by OS
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_C "")
+set(CMAKE_SHARED_LIBRARY_PREFIX_C "")
+set(CMAKE_SHARED_LIBRARY_PREFIX_CXX "")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD" )
   set(CMAKE_SHARED_LIBRARY_SUFFIX_C ".pd_linux")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_CXX "")
-  set(CMAKE_SHARED_LIBRARY_SUFFIX_CXX ".pd_linux")
-endif()
-if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_C "")
-  set(CMAKE_SHARED_LIBRARY_SUFFIX_C ".pd_linux")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_CXX "")
   set(CMAKE_SHARED_LIBRARY_SUFFIX_CXX ".pd_linux")
 endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_C "")
   set(CMAKE_SHARED_LIBRARY_SUFFIX_C ".pd_darwin")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_CXX "")
-  set(CMAKE_SHARED_LIBRARY_SUFFIX_CXX ".pd_linux")
+  set(CMAKE_SHARED_LIBRARY_SUFFIX_CXX ".pd_darwin")
 endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_C "")
   set(CMAKE_SHARED_LIBRARY_SUFFIX_C ".dll")
-  set(CMAKE_SHARED_LIBRARY_PREFIX_CXX "")
   set(CMAKE_SHARED_LIBRARY_SUFFIX_CXX ".dll")
 endif()
 
@@ -63,7 +54,7 @@ find_library(HAVE_SPEEX speex)
 find_library(HAVE_JSON json-c)
 find_library(HAVE_WEBSOCKETS websockets)
 
-#Dependencies: compability
+#Dependencies: compatibility
 INCLUDE(CheckFunctionExists)
 CHECK_FUNCTION_EXISTS(lws_create_context HAVE_WEBSOCKETS_COMPATIBLE)
 
@@ -72,6 +63,14 @@ INCLUDE(CheckIncludeFiles)
 CHECK_INCLUDE_FILES(m_pd.h HAVE_PD_H)
 if(NOT HAVE_PD_H)
   message(FATAL_ERROR "PureData's header file <<m_pd.h>> could not be found: cannot build.\nThe most recent versiond can be found here:\nhttps://raw.githubusercontent.com/pure-data/pure-data/master/src/m_pd.h")
+endif()
+
+#Find OpenSSL: (see https://langui.sh/2015/07/24/osx-clang-include-lib-search-paths/)
+find_package(OpenSSL)
+if(OpenSSL_FOUND)
+  include_directories(${OPENSSL_INCLUDE_DIR})
+else()
+  message(WARNING "OpenSSL could not be found. If OpenSSL is installed, please provide the path, e.g.,\n  cmake -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl .")
 endif()
 
 #Source folders
@@ -123,8 +122,8 @@ else()
 endif()
 
 #PD-External: connectivity
-if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE)
-	message(WARNING "libjson-c or libwebsockets(compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
+if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE OR NOT OpenSSL_FOUND)
+	message(WARNING "libjson-c, OpenSSL, or libwebsockets (compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
 else()
 	add_library(websocket_recv_client SHARED src/connectivity/websocket_recv_client.c)
 	target_link_libraries(websocket_recv_client websockets json-c)
@@ -193,12 +192,12 @@ add_test(test_compile_externals ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --t
 
 ##TESTING: unresolved symbols
 add_executable(test_undefined_symbols EXCLUDE_FROM_ALL tests/test_undefined_symbols.c)
-target_link_libraries(test_undefined_symbols dl ${CMAKE_REQUIRED_LIBRARIES})
+target_link_libraries(test_undefined_symbols dl)
 
 add_test(test_undefined_symbols_build ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target test_undefined_symbols)
 set_tests_properties(test_undefined_symbols_build PROPERTIES DEPENDS test_compile_externals)
 
-add_test(test_undefined_symbols ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_undefined_symbols `ls ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*`)
+add_test(test_undefined_symbols ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_undefined_symbols ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 set_tests_properties(test_undefined_symbols PROPERTIES DEPENDS test_undefined_symbols_build)
 
 #Set C standard
