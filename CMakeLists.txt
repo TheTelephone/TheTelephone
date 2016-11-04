@@ -63,7 +63,7 @@ find_library(HAVE_SPEEX speex)
 find_library(HAVE_JSON json-c)
 find_library(HAVE_WEBSOCKETS websockets)
 
-#Dependencies: compability
+#Dependencies: compatibility
 INCLUDE(CheckFunctionExists)
 CHECK_FUNCTION_EXISTS(lws_create_context HAVE_WEBSOCKETS_COMPATIBLE)
 
@@ -193,12 +193,12 @@ add_test(test_compile_externals ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --t
 
 ##TESTING: unresolved symbols
 add_executable(test_undefined_symbols EXCLUDE_FROM_ALL tests/test_undefined_symbols.c)
-target_link_libraries(test_undefined_symbols dl ${CMAKE_REQUIRED_LIBRARIES})
+target_link_libraries(test_undefined_symbols dl)
 
 add_test(test_undefined_symbols_build ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target test_undefined_symbols)
 set_tests_properties(test_undefined_symbols_build PROPERTIES DEPENDS test_compile_externals)
 
-add_test(test_undefined_symbols ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_undefined_symbols `ls ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*`)
+add_test(test_undefined_symbols ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_undefined_symbols ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 set_tests_properties(test_undefined_symbols PROPERTIES DEPENDS test_undefined_symbols_build)
 
 #Set C standard
