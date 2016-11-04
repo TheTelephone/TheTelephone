@@ -23,7 +23,7 @@ $Log: lpc10.h,v $
 
  */
 
-#if defined(unix) || defined(__unix)
+#if defined(unix) || defined(__unix) || defined(__APPLE__)
 typedef short		INT16;
 typedef int		INT32;
 #endif
