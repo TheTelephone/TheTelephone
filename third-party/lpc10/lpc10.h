@@ -13,28 +13,8 @@ $Log: lpc10.h,v $
 #define LPC10_SAMPLES_PER_FRAME 180
 #define LPC10_BITS_IN_COMPRESSED_FRAME 54
 
-
-/*
-
-  The "#if defined"'s in this file are by no means intended to be
-  complete.  They are what Nautilus uses, which has been successfully
-  compiled under DOS with the Microsoft C compiler, and under a few
-  versions of Unix with the GNU C compiler.
-
- */
-
-#if defined(unix) || defined(__unix) || defined(__APPLE__)
 typedef short		INT16;
 typedef int		INT32;
-#endif
-
-
-#if defined(__MSDOS__) || defined(MSDOS)
-typedef int		INT16;
-typedef long		INT32;
-#endif
-
-
 
 /* The initial values for every member of this structure is 0, except
    where noted in comments. */
