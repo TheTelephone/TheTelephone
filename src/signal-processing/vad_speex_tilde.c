@@ -21,6 +21,7 @@ Outlets:
 Developer note:
 resampler_output and ringbuffer_output provided by generic_codec are not used.
 
+@see denoise_speex_tilde.c
 */
 
 #include <m_pd.h>
