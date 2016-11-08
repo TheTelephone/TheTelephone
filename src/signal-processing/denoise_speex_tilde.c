@@ -18,8 +18,7 @@ Inlets:
 Outlets:
   1x Audio outlet
   
-Code nearly identical to vad_speex_tilde.c
-
+Code identical to
 @see vad_speex_tilde.c
 
 */
