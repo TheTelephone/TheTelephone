@@ -18,10 +18,6 @@ Inlets:
 Outlets:
   1x Audio outlet
 
-Developer note:
-* resampler_output and ringbuffer_output provided by generic_codec are not used.
-* implementation _almost_ identical to vad_speex_tilde.c
-
 @see vad_speex_tilde.c
 
 */
