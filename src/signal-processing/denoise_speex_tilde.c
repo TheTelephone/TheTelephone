@@ -17,6 +17,10 @@ Inlets:
   
 Outlets:
   1x Audio outlet
+  
+Code nearly identical to vad_speex_tilde.c
+
+@see vad_speex_tilde.c
 
 */
 
@@ -24,8 +28,8 @@ Outlets:
 #include <limits.h>
 #include "generic_codec.h"
 
-#include "speex/speex.h"
-#include "speex/speex_preprocess.h"
+#include <speex/speex.h>
+#include <speex/speex_preprocess.h>
 
 static t_class *denoise_speex_tilde_class;
 
