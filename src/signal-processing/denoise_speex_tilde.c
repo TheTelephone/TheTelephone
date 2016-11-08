@@ -122,7 +122,7 @@ void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_
   }
 
   if ((int) max_noise_attenuation > -1 && (int) max_noise_attenuation < -100) {
-    error ("denoise_speex~: max. noise attenuation not specified or not in range <-100,-1>. Using -15db.");
+    error ("denoise_speex~: max. noise attenuation not specified or not in range <-100,-1>. Using -15dB.");
     max_noise_attenuation = -15;
   }
 
