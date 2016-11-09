@@ -53,6 +53,12 @@ install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ DESTINATION ${CMAKE_INSTALL
 install(DIRECTORY pd-help/ DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 #Dependencies: availability
+#Non-standard openssl path on OSX
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl")
+endif()
+find_package(OpenSSL)
+
 INCLUDE(CheckLibraryExists)
 set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json-c m opus sndfile speex websockets)
 find_library(HAVE_FFTW fftw3)
@@ -123,9 +129,10 @@ else()
 endif()
 
 #PD-External: connectivity
-if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE)
-	message(WARNING "libjson-c or libwebsockets(compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
+if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE OR NOT OpenSSL_FOUND)
+	message(WARNING "OpenSSL, libjson-c or libwebsockets(compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
 else()
+  include_directories(${OPENSSL_ROOT_DIR}/include)
 	add_library(websocket_recv_client SHARED src/connectivity/websocket_recv_client.c)
 	target_link_libraries(websocket_recv_client websockets json-c)
 
