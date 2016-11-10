@@ -39,7 +39,8 @@ static inline float *do_resample (unsigned int src_size, float *src, void *resam
 
   unsigned int dst_idx = 0;
   int dst_samplecount_current; //Might be negative if resampling fails.
-  unsigned int src_idx = 0, src_processed, src_blocksize = 512;
+  int src_processed;
+  unsigned int src_idx = 0, src_blocksize = 512;
   do {
     int src_blocksize_current = MIN (src_size - src_idx, src_blocksize);
     int dst_blocksize_current = MIN (dst_size_max - dst_idx, dst_blocksize);
