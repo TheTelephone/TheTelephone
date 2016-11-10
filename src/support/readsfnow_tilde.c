@@ -25,6 +25,7 @@ Methods:
   rewind: rewind and start playing again.
 */
 
+#include <math.h>
 #include <m_pd.h>
 #include <sndfile.h>
 #include <string.h>
@@ -155,7 +156,7 @@ void *readsfnow_tilde_new (t_symbol * s, int argc, t_atom * argv) {
     return NULL;
   }
 
-  if (abs (sys_getsr () - sfinfo.samplerate) > 0.0001) {
+  if (fabsf (sys_getsr () - sfinfo.samplerate) > 0.0001) {
     error ("readsfnow~ (%s): Sampling rate of input file (%d Hz) does not match Puredatas (%f Hz).", x->filename, sfinfo.samplerate, sys_getsr ());
     return NULL;
   }
