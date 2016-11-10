@@ -17,6 +17,7 @@ extern int vparms_(integer *vwin, real *inbuf, real *lpbuf, integer *buflim, int
 */
 
 #include "f2c.h"
+#include <math.h>
 
 /* Table of constant values */
 
@@ -173,9 +174,9 @@ static real c_b2 = 1.f;
     oldsgn = r_sign(&c_b2, &r__1);
     i__1 = stop;
     for (i__ = start; i__ <= i__1; ++i__) {
-	lp_rms__ += (r__1 = lpbuf[i__], abs(r__1));
-	ap_rms__ += (r__1 = inbuf[i__], abs(r__1));
-	e_pre__ += (r__1 = inbuf[i__] - inbuf[i__ - 1], abs(r__1));
+	lp_rms__ += (r__1 = lpbuf[i__], fabsf(r__1));
+	ap_rms__ += (r__1 = inbuf[i__], fabsf(r__1));
+	e_pre__ += (r__1 = inbuf[i__] - inbuf[i__ - 1], fabsf(r__1));
 /* Computing 2nd power */
 	r__1 = inbuf[i__];
 	e0ap += r__1 * r__1;

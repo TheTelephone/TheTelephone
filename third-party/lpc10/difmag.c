@@ -17,6 +17,7 @@ extern int difmag_(real *speech, integer *lpita, integer *tau, integer *ltau, in
 */
 
 #include "f2c.h"
+#include <math.h>
 
 /* ********************************************************************** */
 
@@ -94,7 +95,7 @@ extern int difmag_(real *speech, integer *lpita, integer *tau, integer *ltau, in
 	sum = 0.f;
 	i__2 = n2;
 	for (j = n1; j <= i__2; j += 4) {
-	    sum += (r__1 = speech[j] - speech[j + tau[i__]], abs(r__1));
+	    sum += (r__1 = speech[j] - speech[j + tau[i__]], fabsf(r__1));
 	}
 	amdf[i__] = sum;
 	if (amdf[i__] < amdf[*minptr]) {
