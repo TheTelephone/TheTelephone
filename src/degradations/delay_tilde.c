@@ -102,11 +102,6 @@ void delay_adjust_buffer (t_delay_tilde * x) {
     return;
   }
 
-  if (delay_ms_inlet < 0) {
-    error ("delay~: Delay can't be smaller than zero! I'm no clairvoyant.");
-    return;
-  }
-
   if ((int) (x->delay_ms_inlet / x->one_sample_ms) + x->block_size >= MAX_BUFFER / 2) {
     error ("delay~: Cannot delay for %.0f ms - please recompile and increase MAX_BUFFER.", x->delay_ms_inlet);
     return;
