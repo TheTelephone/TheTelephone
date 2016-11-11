@@ -66,7 +66,6 @@ find_library(HAVE_OPUS opus)
 find_library(HAVE_SNDFILE sndfile)
 find_library(HAVE_SPEEX speex)
 find_library(HAVE_JSON json-c)
-find_library(HAVE_OPENSSL ssl)
 find_library(HAVE_WEBSOCKETS websockets)
 
 #Dependencies: compatibility
@@ -129,8 +128,8 @@ else()
 endif()
 
 #PD-External: connectivity
-if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE OR NOT HAVE_OPENSSL)
-	message(WARNING "OpenSSL, libjson-c or libwebsockets(compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
+if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE)
+	message(WARNING "libjson-c or libwebsockets(compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
 else()
 	add_library(websocket_recv_client SHARED src/connectivity/websocket_recv_client.c)
 	target_link_libraries(websocket_recv_client websockets json-c)
