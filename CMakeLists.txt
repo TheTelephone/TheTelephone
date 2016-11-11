@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(TheTelephone)
 
+#OS dependent workarounds
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  include("CMakeLists.txt.darwin")
+endif()
+
 #Disable warning for disallowed file names, i.e., containing "~".
 if(NOT CMAKE_VERSION VERSION_LESS "3.0")
   cmake_policy(SET CMP0037 OLD)

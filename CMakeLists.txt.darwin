@@ -1,0 +1,9 @@
+
+##MACOS ships with OpenSSL (old, deprecated), but the OpenSSL header files are missing.
+##If a newer OpenSSL version is installed additionally (e.g., via Homebrew), then use it's header file.
+find_package(OpenSSL)
+if(OpenSSL_FOUND)
+  include_directories(${OPENSSL_INCLUDE_DIR})
+else()
+  message(WARNING "OpenSSL header file could not be found. If OpenSSL is installed, please provide the path, e.g.,\n  cmake -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl .")
+endif()
