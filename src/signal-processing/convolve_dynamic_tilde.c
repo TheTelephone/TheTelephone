@@ -149,7 +149,7 @@ void convolve_dynamic_add_to_outbuffer (t_convolve_dynamic_tilde * x) {
 
   //Check if IR needs to be changed
   unsigned int next_response = (unsigned int) (x->impulse_response_next);
-  if (!(0 <= next_response && next_response <= x->impulse_response_channels)) {
+  if (next_response > x->impulse_response_channels) {
     error ("convolve_dynamic~: requested impulse response (%d) is not available; 0..%d are available.", next_response, x->impulse_response_channels);
     next_response = x->impulse_response_current;
   }
@@ -335,7 +335,7 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
 
   if (argc >= 2) {
     unsigned int impulse_response_current = atom_getint(argv+1);
-    if (!(0 <= impulse_response_current && impulse_response_current <= x->impulse_response_channels)) {
+    if (impulse_response_current > x->impulse_response_channels) {
       error ("convolve_dynamic~: Requested impulse response %d is not available in %s; range is 0..%d.", impulse_response_current, infilename, x->impulse_response_channels);
       impulse_response_current = 0;
     }
