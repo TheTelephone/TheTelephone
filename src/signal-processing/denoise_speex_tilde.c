@@ -37,7 +37,6 @@ typedef struct _denoise_speex_tilde {
   t_int max_noise_attenuation;
 
   t_float float_inlet;
-  t_outlet *audio_out;
 
   t_generic_codec codec;
 
@@ -106,8 +105,6 @@ void denoise_speex_tilde_dsp (t_denoise_speex_tilde * x, t_signal ** sp) {
 
 void denoise_speex_tilde_free (t_denoise_speex_tilde * x) {
   generic_codec_free (&x->codec);
-
-  outlet_free (x->audio_out);
 }
 
 void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_floatarg max_noise_attenuation) {
@@ -123,8 +120,8 @@ void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_
     sample_rate = 8000;
   }
 
-  if ((int) max_noise_attenuation > -1 && (int) max_noise_attenuation < -100) {
-    error ("denoise_speex~: max. noise attenuation not specified or not in range <-100,-1>. Using -15dB.");
+  if ((int) max_noise_attenuation > 0 || (int) max_noise_attenuation < -100) {
+    error ("denoise_speex~: max. noise attenuation not specified or not in range <-100,0> (%d). Using -15dB.", (int) max_noise_attenuation);
     max_noise_attenuation = -15;
   }
 
@@ -132,8 +129,6 @@ void *denoise_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate, t_
   x->max_noise_attenuation = max_noise_attenuation;
 
   generic_codec_init (&x->codec, &x->x_obj, sample_rate, frame_size);
-
-  x->audio_out = outlet_new (&x->x_obj, &s_signal);
 
   post ("denoise_speex~: Created with frame size (%d), sampling rate (%f) and max. noise attenuation (%d).", x->codec.frame_size, x->codec.sample_rate_internal, x->max_noise_attenuation);
 
