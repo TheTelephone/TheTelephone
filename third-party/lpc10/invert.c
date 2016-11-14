@@ -17,6 +17,7 @@ extern int invert_(integer *order, real *phi, real *psi, real *rc);
 */
 
 #include "f2c.h"
+#include <math.h>
 
 /* **************************************************************** */
 
@@ -122,7 +123,7 @@ extern int invert_(integer *order, real *phi, real *psi, real *rc);
 	    }
 	}
 /*  Compute intermediate results, which are similar to RC's */
-	if ((r__1 = v[j + j * 10 - 11], abs(r__1)) < 1e-10f) {
+	if ((r__1 = v[j + j * 10 - 11], fabsf(r__1)) < 1e-10f) {
 	    goto L100;
 	}
 	rc[j] = psi[j];

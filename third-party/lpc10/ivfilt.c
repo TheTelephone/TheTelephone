@@ -79,7 +79,7 @@ extern int ivfilt_(real *lpbuf, real *ivbuf, integer *len, integer *nsamp, real 
     /* Function Body */
     for (i__ = 1; i__ <= 3; ++i__) {
 	r__[i__ - 1] = 0.f;
-	k = i__ - 1 << 2;
+	k = (i__ - 1) << 2;
 	i__1 = *len;
 	for (j = (i__ << 2) + *len - *nsamp; j <= i__1; j += 2) {
 	    r__[i__ - 1] += lpbuf[j] * lpbuf[j - k];

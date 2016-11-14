@@ -17,6 +17,7 @@ extern int rcchk_(integer *order, real *rc1f, real *rc2f);
 */
 
 #include "f2c.h"
+#include <math.h>
 
 /* ********************************************************************* */
 
@@ -73,7 +74,7 @@ extern int rcchk_(integer *order, real *rc1f, real *rc2f);
     /* Function Body */
     i__1 = *order;
     for (i__ = 1; i__ <= i__1; ++i__) {
-	if ((r__1 = rc2f[i__], abs(r__1)) > .99f) {
+	if ((r__1 = rc2f[i__], fabsf(r__1)) > .99f) {
 	    goto L10;
 	}
     }

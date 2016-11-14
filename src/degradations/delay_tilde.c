@@ -97,13 +97,12 @@ t_int *delay_tilde_perform (t_int * w) {
 }
 
 void delay_adjust_buffer (t_delay_tilde * x) {
-  unsigned int delay_ms_inlet = (unsigned int) x->delay_ms_inlet;
-  if (delay_ms_inlet == x->delay_ms_current) {
+  if (x->delay_ms_inlet < 0) {
+    error ("delay~: Delay can't be smaller than zero!");
     return;
   }
 
-  if (delay_ms_inlet < 0) {
-    error ("delay~: Delay can't be smaller than zero! I'm no clairvoyant.");
+  if ((unsigned int) x->delay_ms_inlet == x->delay_ms_current) {
     return;
   }
 
@@ -112,7 +111,7 @@ void delay_adjust_buffer (t_delay_tilde * x) {
     return;
   }
 
-  x->delay_ms_current = x->delay_ms_inlet;
+  x->delay_ms_current = (unsigned int) x->delay_ms_inlet;
   post ("delay~: Set new delay to %d ms.", x->delay_ms_current);
   x->input_buffer->chunk_size = (int) (x->delay_ms_current / x->one_sample_ms) + x->block_size;
 }

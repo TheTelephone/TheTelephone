@@ -100,10 +100,10 @@ static inline void generic_codec_dsp_add (t_generic_codec * codec, unsigned int 
   codec->frame_last_decoded = calloc (block_size, sizeof (codec->frame_last_decoded));
 
   t_int signal_ref[4];
-  signal_ref[0] = (t_int)x;
-  signal_ref[1] = (t_int)sp[0]->s_vec;
-  signal_ref[2] = (t_int)sp[1]->s_vec;
-  signal_ref[3] = (t_int)sp[0]->s_n;
+  signal_ref[0] = (t_int) x;
+  signal_ref[1] = (t_int) sp[0]->s_vec;
+  signal_ref[2] = (t_int) sp[1]->s_vec;
+  signal_ref[3] = (t_int) sp[0]->s_n;
 
   dsp_addv (f, 4, signal_ref);
 }
@@ -114,7 +114,7 @@ static inline void generic_codec_resample_to_internal (t_generic_codec * codec, 
     buffer[i] = in[i];
   }
 
-  int input_size;
+  unsigned int input_size;
   float *input = do_resample (n, buffer, codec->resampler_input, (double) (codec->sample_rate_internal / codec->sample_rate_external), &input_size);
   float_buffer_add_chunk (codec->ringbuffer_input, input, input_size);
 
@@ -122,7 +122,7 @@ static inline void generic_codec_resample_to_internal (t_generic_codec * codec, 
 }
 
 static inline void generic_codec_resample_to_external (t_generic_codec * codec, unsigned int n, float *out_chunk) {
-  int output_size;
+  unsigned int output_size;
   float *output = do_resample (n, out_chunk, codec->resampler_output, (double) (codec->sample_rate_external / codec->sample_rate_internal), &output_size);
   float_buffer_add_chunk (codec->ringbuffer_output, output, output_size);
   free (output);

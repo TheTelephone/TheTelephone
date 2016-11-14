@@ -452,10 +452,10 @@ static integer c__1 = 1;
     voibuf[0] = voibuf[2];
     voibuf[1] = voibuf[3];
     for (i__ = 1; i__ <= 2; ++i__) {
-	vwin[(i__ << 1) - 2] = vwin[(i__ + 1 << 1) - 2] - contrl_1.lframe;
-	vwin[(i__ << 1) - 1] = vwin[(i__ + 1 << 1) - 1] - contrl_1.lframe;
-	awin[(i__ << 1) - 2] = awin[(i__ + 1 << 1) - 2] - contrl_1.lframe;
-	awin[(i__ << 1) - 1] = awin[(i__ + 1 << 1) - 1] - contrl_1.lframe;
+	vwin[(i__ << 1) - 2] = vwin[((i__ + 1) << 1) - 2] - contrl_1.lframe;
+	vwin[(i__ << 1) - 1] = vwin[((i__ + 1) << 1) - 1] - contrl_1.lframe;
+	awin[(i__ << 1) - 2] = awin[((i__ + 1) << 1) - 2] - contrl_1.lframe;
+	awin[(i__ << 1) - 1] = awin[((i__ + 1) << 1) - 1] - contrl_1.lframe;
 /*       EWIN(*,J) is unused for J .NE. AF, so the following shift is 
 */
 /*       unnecessary.  It also causes error messages when the C versio
@@ -468,7 +468,7 @@ n */
 /* 	   EWIN(2,I) = EWIN(2,I+1) - LFRAME */
 	obound[i__ - 1] = obound[i__];
 	voibuf[i__ * 2] = voibuf[(i__ + 1) * 2];
-	voibuf[(i__ << 1) + 1] = voibuf[(i__ + 1 << 1) + 1];
+	voibuf[(i__ << 1) + 1] = voibuf[((i__ + 1) << 1) + 1];
 	rmsbuf[i__ - 1] = rmsbuf[i__];
 	i__1 = contrl_1.order;
 	for (j = 1; j <= i__1; ++j) {

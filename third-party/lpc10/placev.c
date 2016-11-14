@@ -169,7 +169,7 @@ t*/
 
     /* Function Body */
 /* Computing MAX */
-    i__1 = vwin[(*af - 1 << 1) + 2] + 1, i__2 = (*af - 2) * *lframe + 1;
+    i__1 = vwin[((*af - 1) << 1) + 2] + 1, i__2 = (*af - 2) * *lframe + 1;
     lrange = max(i__1,i__2);
     hrange = *af * *lframe;
 /* Compute OSPTR1, so the following code only looks at relevant onsets. */
@@ -183,7 +183,7 @@ L90:
 /* Check for case 1 first (fast case): */
     if (osptr1 <= 1 || osbuf[osptr1 - 1] < lrange) {
 /* Computing MAX */
-	i__1 = vwin[(*af - 1 << 1) + 2] + 1;
+	i__1 = vwin[((*af - 1) << 1) + 2] + 1;
 	vwin[(*af << 1) + 1] = max(i__1,*dvwinl);
 	vwin[(*af << 1) + 2] = vwin[(*af << 1) + 1] + *maxwin - 1;
 	*obound = 0;

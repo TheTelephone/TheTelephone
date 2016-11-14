@@ -482,9 +482,9 @@ static integer c__2 = 2;
 	}
 	for (i__ = 1; i__ <= 6; ++i__) {
 	    if ((i__1 = drc[i__ * 3 - 2] - drc[i__ * 3 - 3], (real) abs(i__1))
-		     >= corth[ixcor + (i__ + 2 << 2) - 5] && (i__2 = drc[i__ *
+		     >= corth[ixcor + ((i__ + 2) << 2) - 5] && (i__2 = drc[i__ *
 		     3 - 2] - drc[i__ * 3 - 1], (real) abs(i__2)) >= corth[
-		    ixcor + (i__ + 2 << 2) - 5]) {
+		    ixcor + ((i__ + 2) << 2) - 5]) {
 		irc[i__] = median_(&drc[i__ * 3 - 1], &drc[i__ * 3 - 2], &drc[
 			i__ * 3 - 3]);
 	    }

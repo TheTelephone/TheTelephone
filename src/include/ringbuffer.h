@@ -58,7 +58,7 @@ static void t_sample_buffer_add (t_sample_buffer * buffer, t_sample element) {
   buffer->number_elements++;
 }
 
-static void t_sample_buffer_add_chunk (t_sample_buffer * buffer, t_sample *chunk, unsigned int size) {
+static void t_sample_buffer_add_chunk (t_sample_buffer * buffer, t_sample * chunk, unsigned int size) {
   for (int i = 0; i < size; i++) {
     t_sample_buffer_add (buffer, chunk[i]);
   }
@@ -68,7 +68,7 @@ static bool t_sample_buffer_has_chunk (t_sample_buffer * buffer) {
   return buffer->number_elements >= buffer->chunk_size;
 }
 
-static void t_sample_buffer_pop_chunk (t_sample_buffer * buffer, t_sample **chunk, unsigned int size, bool *manual_delete) {
+static void t_sample_buffer_pop_chunk (t_sample_buffer * buffer, t_sample ** chunk, unsigned int size, bool * manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = 1;
     t_sample *cpx = (t_sample *) malloc (sizeof (t_sample) * size);
@@ -141,11 +141,11 @@ static bool float_buffer_has_chunk_n (float_buffer * buffer, unsigned int n) {
   return buffer->number_elements >= buffer->chunk_size * n;
 }
 
-static void float_buffer_read_chunk_n (float_buffer * buffer, float **chunk, unsigned int size, unsigned int n, bool *manual_delete) {
+static void float_buffer_read_chunk_n (float_buffer * buffer, float **chunk, unsigned int size, unsigned int n, bool * manual_delete) {
 
-  unsigned int buffer_index = (buffer->start  + size * n) % buffer->size;
+  unsigned int buffer_index = (buffer->start + size * n) % buffer->size;
 
-  if (buffer->start + size * n > buffer_index) { 
+  if (buffer->start + size * n > buffer_index) {
     *manual_delete = true;
     float *cpx = (float *) malloc (sizeof (float) * size);
     for (int i = 0; i < size; i++) {
@@ -159,7 +159,7 @@ static void float_buffer_read_chunk_n (float_buffer * buffer, float **chunk, uns
   }
 }
 
-static void float_buffer_pop_chunk (float_buffer * buffer, float **chunk, unsigned int size, bool *manual_delete) {
+static void float_buffer_pop_chunk (float_buffer * buffer, float **chunk, unsigned int size, bool * manual_delete) {
   if (buffer->start > (buffer->start + size) % buffer->size) {
     *manual_delete = true;
     float *cpx = (float *) malloc (sizeof (float) * size);

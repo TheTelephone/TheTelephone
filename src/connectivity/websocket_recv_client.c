@@ -32,7 +32,7 @@ Outlets:
 #include <libwebsockets.h>
 #include <json-c/json.h>
 
-#define RECONNECT_DELAY 0.5       //in seconds
+#define RECONNECT_DELAY 0.5     //in seconds
 
 static t_class *websocket_recv_client_class;
 

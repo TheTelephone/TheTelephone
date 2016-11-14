@@ -72,7 +72,7 @@ void opus_add_to_outbuffer (t_opus_tilde * x) {
   float_buffer_pop_chunk (x->codec.ringbuffer_input, &frame, x->codec.ringbuffer_input->chunk_size, &free_required);
 
   int decompressed_length = x->codec.frame_size;
-  char compressed[x->codec.frame_size]; //Assuming coding requires less space
+  unsigned char compressed[x->codec.frame_size];        //Assuming coding requires less space
   int compressed_length = opus_encode_float (x->encoder, frame, x->codec.frame_size, compressed, x->codec.ringbuffer_input->chunk_size);
   if (compressed_length < 0) {
     error ("opus~: Compressing current frame failed with error code %d.", compressed_length);
