@@ -1,0 +1,20 @@
+#N canvas 65 85 928 1119 12;
+#X obj 46 191 dac~;
+#X obj 46 88 adc~;
+#X text 278 151 Input:;
+#X text 275 66 Arguments:;
+#X text 279 170 - signal inlet;
+#X text 279 201 Output:;
+#X obj 46 136 denoise_speex~ 80 8000 -15;
+#X text 277 124 3: max. noise attenuation: <-100 \, -1> [dB] (default:
+-15), f 73;
+#X text 280 220 - signal outlet: denoised input signal;
+#X text 40 5 denoise_speex~ - applies the _noise suppression_ algorithm
+of [Speex](http://www.speex.org/);
+#X text 277 86 1: frame size: 80 (default) \, 160 \, 240 \, 320 \,
+640 [samples];
+#X text 277 105 2: sample rate: 8000 (default) \, 16000 \, 32000 [Hz]
+, f 73;
+#X connect 1 0 6 0;
+#X connect 6 0 0 0;
+#X connect 6 0 0 1;

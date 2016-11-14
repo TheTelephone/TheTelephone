@@ -1,0 +1,19 @@
+#N canvas 65 85 928 1119 12;
+#X obj 46 191 dac~;
+#X obj 46 88 adc~;
+#X text 248 141 Input:;
+#X text 245 66 Arguments:;
+#X text 249 160 - signal inlet;
+#X text 249 191 Output:;
+#X obj 46 136 vad_speex~ 80 8000;
+#X text 40 5 vad_speex~ - applies the _voice activity detection_ algorithm
+of [Speex](http://www.speex.org/);
+#X text 247 86 1: frame size: 80 (default) \, 160 \, 240 \, 320 [samples]
+;
+#X text 250 210 - signal outlet: routing incoming signal through;
+#X text 250 230 - bang: bang on vocie activity in current frame;
+#X text 247 105 2: sample rate: 8000 (default) \, 16000 \, 32000 [Hz]
+, f 73;
+#X connect 1 0 6 0;
+#X connect 6 0 0 0;
+#X connect 6 0 0 1;

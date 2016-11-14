@@ -9,7 +9,7 @@ vad_speex~ applies the _voice activity detection_ algorithm of [Speex](http://ww
 Parameters:
   vad_speex~ FRAME_SIZE SAMPLE_RATE
   FRAME_SIZE in samples: 80, 160, 240, 320
-  SAMPLE_RATE in  Hz: 8000, 16000
+  SAMPLE_RATE in  Hz: 8000, 16000, 32000
 
 Inlets:
   1x Audio inlet
@@ -21,6 +21,7 @@ Outlets:
 Developer note:
 resampler_output and ringbuffer_output provided by generic_codec are not used.
 
+@see denoise_speex_tilde.c
 */
 
 #include <m_pd.h>
@@ -113,7 +114,7 @@ void *vad_speex_tilde_new (t_floatarg frame_size, t_floatarg sample_rate) {
     frame_size = 80;
   }
 
-  if ((int) sample_rate != 8000 && (int) sample_rate != 16000) {
+  if ((int) sample_rate != 8000 && (int) sample_rate != 16000 && (int) sample_rate != 32000) {
     error ("vad_speex~: invalid sample rate specified (%d). Using 8000.", (int) sample_rate);
     sample_rate = 8000;
   }
