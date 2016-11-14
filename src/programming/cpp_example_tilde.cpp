@@ -14,15 +14,12 @@ Inlets:
   1x Float inlet
  
  */
- 
+
 extern "C" {
 #include <m_pd.h>
 }
-
 #include <iostream>
 #include <string>
-
-
 static t_class *cpp_example_tilde_class;
 
 typedef struct _cpp_example_tilde {

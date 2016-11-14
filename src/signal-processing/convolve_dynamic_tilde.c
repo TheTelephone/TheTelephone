@@ -79,8 +79,8 @@ typedef struct _convolve_dynamic_tilde {
   float *overlap_add;
   float *crossfading_filter;
 
-  float_buffer *input_buffer;      //Ringbuffer for incoming signals
-  float_buffer *output_buffer;     //Ringbuffer for outgoing signals
+  float_buffer *input_buffer;   //Ringbuffer for incoming signals
+  float_buffer *output_buffer;  //Ringbuffer for outgoing signals
 } t_convolve_dynamic_tilde;
 
 void convolve_dynamic_add_to_output (t_convolve_dynamic_tilde * x, t_sample * out);
@@ -313,7 +313,7 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
 
   if ((infile = sf_open (infilename, SFM_READ, &sfinfo)) == NULL) {
     char pwd[512];
-    getcwd(pwd, 512);
+    getcwd (pwd, 512);
 
     error ("convolve_dynamic~: Not able to open input file %s/%s. libsndfile reported: %s.\n", pwd, infilename, sf_strerror (NULL));
     return NULL;
@@ -322,19 +322,19 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
     error ("convolve_dynamic~: Input file %s does not contain any channel.\n", infilename);
     return NULL;
   }
-  
+
   t_convolve_dynamic_tilde *x = (t_convolve_dynamic_tilde *) pd_new (convolve_dynamic_tilde_class);
   x->impulse_response_sample_rate = sfinfo.samplerate;
   x->impulse_response_channels = sfinfo.channels;
   x->impulse_response_length = sfinfo.frames;
-  
+
   if ((int) x->impulse_response_sample_rate != (int) sys_getsr ()) {
     error ("convolve_dynamic~: PureData's sampling rate (%d) and the sampling rate of IRs (%d).", (int) sys_getsr (), x->impulse_response_sample_rate);
     return NULL;
   }
 
   if (argc >= 2) {
-    unsigned int impulse_response_current = atom_getint(argv+1);
+    unsigned int impulse_response_current = atom_getint (argv + 1);
     if (impulse_response_current > x->impulse_response_channels) {
       error ("convolve_dynamic~: Requested impulse response %d is not available in %s; range is 0..%d.", impulse_response_current, infilename, x->impulse_response_channels);
       impulse_response_current = 0;
@@ -342,7 +342,6 @@ void *convolve_dynamic_tilde_new (t_symbol * s, int argc, t_atom * argv) {
     x->impulse_response_current = impulse_response_current;
   }
 
-  
   //Read IRs-file
   x->impulse_response = (float *) malloc (x->impulse_response_length * x->impulse_response_channels * sizeof (float));
   x->impulse_response_size = sf_readf_float (infile, x->impulse_response, x->impulse_response_length);

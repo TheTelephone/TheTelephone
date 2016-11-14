@@ -38,7 +38,7 @@ static inline float *do_resample (unsigned int src_size, float *src, void *resam
   float *dst = (float *) calloc (dst_size_max, sizeof (float));
 
   unsigned int dst_idx = 0;
-  int dst_samplecount_current; //Might be negative if resampling fails.
+  int dst_samplecount_current;  //Might be negative if resampling fails.
   int src_processed;
   unsigned int src_idx = 0, src_blocksize = 512;
   do {

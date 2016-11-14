@@ -136,10 +136,9 @@ void websocket_recv_server_create (void *x_void) {
     pthread_exit (NULL);
     return;
   }
-
   //Start listening
   while (!x->websocket_should_exit) {
-    lws_service(x->websocket_context, 50);
+    lws_service (x->websocket_context, 50);
   }
 
   lws_context_destroy (x->websocket_context);

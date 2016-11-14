@@ -32,12 +32,12 @@ static t_class *writesfnow_tilde_class;
 typedef struct _writesfnow_tilde {
   t_object x_obj;
 
-  unsigned int inlet_count; //The number of inlets.
+  unsigned int inlet_count;     //The number of inlets.
 
   char filename[500];
   SNDFILE *file;
 
-  t_inlet **inlet_additional; //The signal inlets without the default inlet
+  t_inlet **inlet_additional;   //The signal inlets without the default inlet
 
   t_float f;                    //Unused
 } t_writesfnow_tilde;
@@ -77,7 +77,7 @@ void writesfnow_tilde_dsp (t_writesfnow_tilde * x, t_signal ** sp) {
     error ("writesfnow~: Could not open file %s. Nothing will be written.", x->filename);
     return;
   }
-  sf_command (x->file, SFC_SET_UPDATE_HEADER_AUTO, NULL, SF_TRUE) ;
+  sf_command (x->file, SFC_SET_UPDATE_HEADER_AUTO, NULL, SF_TRUE);
 
 
   t_int signal_ref[2 + x->inlet_count + 1];
@@ -140,7 +140,7 @@ void *writesfnow_tilde_new (t_symbol * s, int argc, t_atom * argv) {
   }
 
   char pwd[512];
-  getcwd(pwd, 512);
+  getcwd (pwd, 512);
   post ("writesfnow~: Going to write to %s/%s with %d channels.", pwd, x->filename, x->inlet_count);
   return (void *) x;
 }
