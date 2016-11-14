@@ -68,11 +68,8 @@ endif()
 find_package(OpenSSL)
 if(OpenSSL_FOUND)
   include_directories(${OPENSSL_INCLUDE_DIR})
-endif()
-
-CHECK_INCLUDE_FILES(openssl/ssl.h HAVE_OPENSSL_H)
-if(NOT HAVE_OPENSSL_H)
-  message(WARNING "OpenSSL header file could not be found. If OpenSSL is installed, please provide the path, e.g.,\n  cmake -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl .")
+else()
+  message(WARNING "OpenSSL could not be found. If OpenSSL is installed, please provide the path, e.g.,\n  cmake -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl .")
 endif()
 
 #Source folders
@@ -124,8 +121,8 @@ else()
 endif()
 
 #PD-External: connectivity
-if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE OR NOT HAVE_OPENSSL_H)
-	message(WARNING "libjson-c, openssl.h, or libwebsockets (compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
+if(NOT HAVE_JSON OR NOT HAVE_WEBSOCKETS OR NOT HAVE_WEBSOCKETS_COMPATIBLE OR NOT OpenSSL_FOUND)
+	message(WARNING "libjson-c, OpenSSL, or libwebsockets (compatible version) not found: websocket_recv_client and websocket_recv_server will not be build.")
 else()
 	add_library(websocket_recv_client SHARED src/connectivity/websocket_recv_client.c)
 	target_link_libraries(websocket_recv_client websockets json-c)
