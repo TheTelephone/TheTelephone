@@ -17,63 +17,75 @@ Moreover, [PureData](https://puredata.info/) is extended with the following feat
 
 Build procedure
 ---
-### Install dependencies
+_ATTENTION:_ only the [externals](http://pdstatic.iem.at/externals-HOWTO/) are compiled (and later installed) for which _all_ required libraries are installed.  
+
+For further information about installing [externals](http://pdstatic.iem.at/externals-HOWTO/), please take a look [here](https://puredata.info/docs/faq/how-do-i-install-externals-and-help-files).
+
+
+### Linux-like (e.g., [Ubuntu 16.10](http://releases.ubuntu.com/16.10/) and [Windows 10](https://www.microsoft.com/en-us/windows) using [Ubuntu Bash](https://msdn.microsoft.com/en-us/commandline/wsl/)):
+
+#### Install Tools and Dependencies
 
 For [Ubuntu 16.10](http://releases.ubuntu.com/16.10/):
-```bash
-sudo apt install build-essential git cmake puredata puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson-c-dev
+`sudo apt install build-essential git cmake puredata puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson-c-dev`
+
+For [Windows 10](https://www.microsoft.com/en-us/windows) using [Ubuntu Bash](https://msdn.microsoft.com/en-us/commandline/wsl/)):
+`sudo apt install build-essential git cmake puredata puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson-c-dev`
+
+__NOTE__ for [Bash on Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/wsl/):  
+* this environment behaves like Ubuntu 14.04, and
+* this environment does not provide a XServer and thus PureData's UI cannot be shown.
+
+#### Compile and Install [__externals__](http://pdstatic.iem.at/externals-HOWTO/)
+
+```shell
+git clone https://github.com/TheTelephone/TheTelephone
+cd TheTelephone && cmake . && cmake --build . && make install
 ```
 
-For [MacOS](www.apple.com/macos/) using [Homebrew](http://brew.sh):
+### [MacOS](www.apple.com/macos/) using [Homebrew](http://brew.sh):
+
+#### Install Tools and Dependencies
 
 1. Install [PureData](https://puredata.info/docs/faq/macosx)
 2. Make sure [PureData](https://puredata.info/docs/faq/macosx)'s header file [`m_pd.h`](https://github.com/pure-data/pure-data/blob/master/src/m_pd.h) is in your path (__should__ match your [PureData](https://puredata.info/) version).  
 To grab the most recent, run: `curl https://raw.githubusercontent.com/pure-data/pure-data/master/src/m_pd.h > /usr/local/include/m_pd.h`
 3. Install [Homebrew](http://brew.sh)
-4. `brew install cmake git libsndfile libresample fftw libwebsockets opus-tools libgsm speex json-c`
+4. Install required tools and dependencies: `brew install cmake git libsndfile libresample fftw libwebsockets opus-tools libgsm speex json-c`
 
-For [Windows 10](https://www.microsoft.com/en-us/windows) using [Ubuntu Bash](https://msdn.microsoft.com/en-us/commandline/wsl/):
+#### Compile and Install [__externals__](http://pdstatic.iem.at/externals-HOWTO/)
 
-1. Install [Bash on Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/wsl/)
-2. `sudo apt install build-essential git cmake puredata puredata-dev libsndfile-dev libresample-dev libfftw3-dev libwebsockets-dev libopus-dev libgsm1-dev libspeex-dev libspeexdsp-dev libjson-c-dev`
-
-NOTE on[Bash on Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/wsl/):
-
-* behaves like Ubuntu 14.04, and
-* does not provide a XServer and thus PureData's UI cannot be shown.
-
-### Download
-
-```bash
+```shell
 git clone https://github.com/TheTelephone/TheTelephone
+cd TheTelephone && cmake . && cmake --build . && make install
 ```
 
-### Compile
+### [Microsoft Windows 7/8/10](https://de.wikipedia.org/wiki/Microsoft_Windows):
 
-```bash
-cd TheTelephone && cmake . && make
+__ATTENTION__: Following these instruction will only build a _small_ subset of the included externals as _no_ external libraries are installed.
+
+#### Install Tools and Dependencies
+
+1. Install [PureData](https://puredata.info/)
+2. Install [cmake](https://cmake.org/)
+3. Install [TDM-GCC](http://tdm-gcc.tdragon.net)
+
+#### Compile and Install [__externals__](http://pdstatic.iem.at/externals-HOWTO/)
+
+Run in shell (e.g., `cmd.exe`):
+```shell
+git clone https://github.com/TheTelephone/TheTelephone
+cd TheTelephone
+cmake -G"MinGW Makefiles" -DPUREDATA_ROOT="C:/Program Files (x86)/Pd/"
+cmake --build .
 ```
 
-_ATTENTION:_ only the [externals](http://pdstatic.iem.at/externals-HOWTO/) are compiled (and later installed) for which _all_ required libraries are installed.  
-
-### Install [__externals__](http://pdstatic.iem.at/externals-HOWTO/)
-
-```bash
-make install
-```
-
-By default the compiled [externals](http://pdstatic.iem.at/externals-HOWTO/) are installed into the home directory of the current user:
-* Linux: `$ENV{HOME}/pd-externals`
-* MacOS: `$ENV{HOME}/Library/Pd`
-
-This can be overriden by setting `CMAKE_INSTALL_PREFIX`.
-
-For further information about installing [externals](http://pdstatic.iem.at/externals-HOWTO/), please take a look [here](https://puredata.info/docs/faq/how-do-i-install-externals-and-help-files).
+__NOTE__: `PUREDATA_ROOT` needs to contain the correct  path to PureData.
+__NOTE__: The compiled externals need to be installed _manually_.
 
 ### Documentation
 
 Documentation can be generated using [Doxygen](www.doxygen.org/).
-
 For [Ubuntu 16.10](http://releases.ubuntu.com/16.10/) install the following packages:
 ```bash
 sudo apt install doxygen graphviz
