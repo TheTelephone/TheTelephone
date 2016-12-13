@@ -1,0 +1,11 @@
+message(INFO "This is Windows - conducting platform specific magic.")
+
+###Puredata
+
+if(NOT DEFINED PUREDATA_ROOT)
+  message(FATAL_ERROR "Please set PUREDATA_ROOT to the root directory of Puredata, e.g.: cmake -DPUREDATA_ROOT='C:/Program Files (x86)/Pd/'")
+endif()
+
+#Windows does not support undefined symbols in a dll thus linking against `pd.dll` is required.
+set(CMAKE_C_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES} '${PUREDATA_ROOT}/bin/pd.dll'")
+set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} '${PUREDATA_ROOT}/bin/pd.dll'")

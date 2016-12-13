@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(TheTelephone)
 
-#Disable warning for disallowed file names, i.e., containing "~".
+#Disable warning for disallowed file names, i.e., containing "".
 if(NOT CMAKE_VERSION VERSION_LESS "3.0")
   cmake_policy(SET CMP0037 OLD)
 endif()
@@ -43,27 +43,37 @@ endif()
 install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY pd-help/ DESTINATION ${CMAKE_INSTALL_PREFIX})
 
+#OS specific stuff
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  include(CMakeLists.in.windows)
+endif()
+
+#PureData's header file
+INCLUDE(CheckIncludeFile)
+
+if(DEFINED PUREDATA_ROOT)
+  set(CMAKE_REQUIRED_INCLUDES ${PUREDATA_ROOT}/src)
+endif()
+check_include_file(m_pd.h HAVE_PD_H)
+if(NOT HAVE_PD_H)
+  message(FATAL_ERROR "PureData's header file <<m_pd.h>> could not be found: cannot build.\nThe most recent version can be found here:\nhttps://raw.githubusercontent.com/pure-data/pure-data/master/src/m_pd.h")
+endif()
+
 #Dependencies: availability
-INCLUDE(CheckLibraryExists)
+include(CheckLibraryExists)
 set(CMAKE_REQUIRED_LIBRARIES fftw3 gsm json-c m opus sndfile speex websockets)
 find_library(HAVE_FFTW fftw3)
 find_library(HAVE_GSM gsm)
 find_library(HAVE_OPUS opus)
+find_library(HAVE_RESAMPLE resample)
 find_library(HAVE_SNDFILE sndfile)
 find_library(HAVE_SPEEX speex)
 find_library(HAVE_JSON json-c)
 find_library(HAVE_WEBSOCKETS websockets)
 
 #Dependencies: compatibility
-INCLUDE(CheckFunctionExists)
-CHECK_FUNCTION_EXISTS(lws_create_context HAVE_WEBSOCKETS_COMPATIBLE)
-
-#PureData's header file
-INCLUDE(CheckIncludeFiles)
-CHECK_INCLUDE_FILES(m_pd.h HAVE_PD_H)
-if(NOT HAVE_PD_H)
-  message(FATAL_ERROR "PureData's header file <<m_pd.h>> could not be found: cannot build.\nThe most recent versiond can be found here:\nhttps://raw.githubusercontent.com/pure-data/pure-data/master/src/m_pd.h")
-endif()
+include(CheckFunctionExists)
+check_function_exists(lws_create_context HAVE_WEBSOCKETS_COMPATIBLE)
 
 #Find OpenSSL: (see https://langui.sh/2015/07/24/osx-clang-include-lib-search-paths/)
 find_package(OpenSSL)
@@ -85,7 +95,7 @@ add_library(audiorouting~ SHARED src/support/audiorouting_tilde.c)
 target_link_libraries(audiorouting~ m)
 
 if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-  message(WARNING "CLOCK_MONOTONIC not available(Linux/FreeBSD only): benchmark_delay~ will not be build.")
+  message(WARNING "CLOCK_MONOTONIC not available(Linux/FreeBSD only): benchmark_delay will not be build.")
 elseif()
   add_library(benchmark_delay~ SHARED src/support/benchmark_delay_tilde.c)
   target_link_libraries(benchmark_delay~ m)
@@ -98,13 +108,15 @@ elseif()
 endif()
 
 add_library(delay~ SHARED src/degradations/delay_tilde.c)
+target_link_libraries(delay~)
 
 #PD-External: external with CPP
 add_library(cpp_example~ SHARED src/programming/cpp_example_tilde.cpp)
+target_link_libraries(cpp_example~)
 
 #PD-External: I/O
 if(NOT HAVE_SNDFILE)
-  message(WARNING "libsndfile not found: readsfnow~ and writesfnow~ will not be build." )
+  message(WARNING "libsndfile not found: readsfnow and writesfnow will not be build." )
 else()
   add_library(readsfnow~ SHARED src/support/readsfnow_tilde.c)
   target_link_libraries(readsfnow~ sndfile)
@@ -114,8 +126,8 @@ else()
 endif()
 
 #PD-External: convolution
-if(NOT HAVE_FFTW AND NOT HAVE_SNDFILE)
-	message(WARNING "libfftw3 or libsndfile not found: convolve_dynamic~ will not be build.")
+if(NOT HAVE_FFTW AND NOT HAVE_RESAMPLE AND NOT HAVE_SNDFILE)
+	message(WARNING "libfftw3, libresample, or libsndfile not found: convolve_dynamic~ will not be build.")
 else()
 	add_library(convolve_dynamic~ SHARED src/signal-processing/convolve_dynamic_tilde.c)
 	target_link_libraries(convolve_dynamic~ resample m fftw3 sndfile)
@@ -133,52 +145,68 @@ else()
 endif()
 
 #PD-External: G.711
-include_directories(third-party/itu-t_stl2009_g711)
-file(GLOB G711_SRC third-party/itu-t_stl2009_g711/*)
-add_library(g711~ SHARED src/degradations/g711_tilde.c ${G711_SRC})
-target_link_libraries(g711~ resample m)
+if(NOT HAVE_RESAMPLE)
+  message(WARNING "libresample not found: g711~ will not be build.")
+else()
+  include_directories(third-party/itu-t_stl2009_g711)
+  file(GLOB G711_SRC third-party/itu-t_stl2009_g711/*)
+  add_library(g711~ SHARED src/degradations/g711_tilde.c ${G711_SRC})
+  target_link_libraries(g711~ resample m)
+endif()
 
 #PD-External: G.722
-include_directories(third-party/spanddsp_g722)
-file(GLOB G722_SRC third-party/spanddsp_g722/*)
-add_library(g722~ SHARED src/degradations/g722_tilde.c  ${G722_SRC})
-target_link_libraries(g722~ resample m)
+if(NOT HAVE_RESAMPLE)
+  message(WARNING "libresample not found: g722~ will not be build.")
+else()
+  include_directories(third-party/spanddsp_g722)
+  file(GLOB G722_SRC third-party/spanddsp_g722/*)
+  add_library(g722~ SHARED src/degradations/g722_tilde.c  ${G722_SRC})
+  target_link_libraries(g722~ resample m)
+endif()
 
 #PD-External: GSM
-if(NOT HAVE_GSM)
-  message(WARNING "libgsm not found: gsm~ will not be build.")
+if(NOT HAVE_GSM AND NOT HAVE_RESAMPLE)
+  message(WARNING "libgsm or libresample not found: gsm~ will not be build.")
 else()
   add_library(gsm~ SHARED src/degradations/gsm_tilde.c)
   target_link_libraries(gsm~ resample m gsm)
 endif()
 
 #PD-External: LPC-10
-include_directories(third-party/lpc10)
-file(GLOB LPC10_SRC third-party/lpc10/*)
-add_library(lpc10~ SHARED src/degradations/lpc10_tilde.c ${LPC10_SRC})
-target_link_libraries(lpc10~ resample m)
+if(NOT HAVE_RESAMPLE)
+  message(WARNING "libresample not found: lpc10~ will not be build.")
+else()
+  include_directories(third-party/lpc10)
+  file(GLOB LPC10_SRC third-party/lpc10/*)
+  add_library(lpc10~ SHARED src/degradations/lpc10_tilde.c ${LPC10_SRC})
+  target_link_libraries(lpc10~ resample m)
+endif()
 
 #PD-External: MNRU
-include_directories(third-party/itu-t_stl2009_mnru)
-file(GLOB MNRU_SRC third-party/itu-t_stl2009_mnru/*)
-add_library(mnru~ SHARED src/degradations/mnru_tilde.c ${MNRU_SRC})
-target_link_libraries(mnru~ resample m)
+if(NOT HAVE_RESAMPLE)
+  message(WARNING "libresample not found: mnru~ will not be build.")
+else()
+  include_directories(third-party/itu-t_stl2009_mnru)
+  file(GLOB MNRU_SRC third-party/itu-t_stl2009_mnru/*)
+  add_library(mnru~ SHARED src/degradations/mnru_tilde.c ${MNRU_SRC})
+  target_link_libraries(mnru~ resample m)
+endif()
 
 #PD-External: OPUS
-if(NOT HAVE_OPUS)
-  message(WARNING "libopus not found: opus~ will not be build.")
+if(NOT HAVE_OPUS AND NOT HAVE_RESAMPLE)
+  message(WARNING "libopus or libresample not found: opus~ will not be build.")
 else()
   add_library(opus~ SHARED src/degradations/opus_tilde.c)
   target_link_libraries(opus~ resample opus)
 endif()
 
 #PD-External: SPEEX
-if(NOT HAVE_SPEEX)
-  message(WARNING "libspeex not found: speex~ will not be build.")
+if(NOT HAVE_RESAMPLE AND NOT HAVE_SPEEX)
+  message(WARNING "libresample or libspeex not found: speex~ will not be build.")
 else()
   add_library(vad_speex~ SHARED src/signal-processing/vad_speex_tilde.c)
   target_link_libraries(vad_speex~ resample speexdsp)
-  
+
   add_library(denoise_speex~ SHARED src/signal-processing/denoise_speex_tilde.c)
   target_link_libraries(denoise_speex~ resample speexdsp)
 
@@ -194,14 +222,20 @@ add_custom_target(test-verbose COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
 add_test(test_compile_externals ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target all)
 
 ##TESTING: unresolved symbols
-add_executable(test_undefined_symbols EXCLUDE_FROM_ALL tests/test_undefined_symbols.c)
-target_link_libraries(test_undefined_symbols dl)
+set(CMAKE_REQUIRED_LIBRARIES dl)
+check_function_exists(dlopen HAVE_DLOPEN)
+if(NOT HAVE_DLOPEN)
+  message(INFO "dlopen() is not available: test for unresolved symbol is not necessary.")
+else()
+  add_executable(test_undefined_symbols EXCLUDE_FROM_ALL tests/test_undefined_symbols.c)
+  target_link_libraries(test_undefined_symbols dl)
 
-add_test(test_undefined_symbols_build ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target test_undefined_symbols)
-set_tests_properties(test_undefined_symbols_build PROPERTIES DEPENDS test_compile_externals)
+  add_test(test_undefined_symbols_build ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target test_undefined_symbols)
+  set_tests_properties(test_undefined_symbols_build PROPERTIES DEPENDS test_compile_externals)
 
-add_test(test_undefined_symbols ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_undefined_symbols ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-set_tests_properties(test_undefined_symbols PROPERTIES DEPENDS test_undefined_symbols_build)
+  add_test(test_undefined_symbols ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_undefined_symbols ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+  set_tests_properties(test_undefined_symbols PROPERTIES DEPENDS test_undefined_symbols_build)
+endif()
 
 #Set C standard
 set(CMAKE_C_STANDARD 99)
@@ -219,7 +253,7 @@ elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
 elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
   message(FATAL_ERROR "For compiler <<Intel>> the flag for exporting symbols is not set." )
 elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
-  message(FATAL_ERROR "For compiler <<MSVC>> the flag for exporting symbols is not set." )
+  message(FATAL_ERROR "<<MSVC>> is not supported due to C2057.")
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -229,9 +263,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set_property(TARGET ${target_name} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--export-dynamic")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-  message(FATAL_ERROR "For compiler <<Intel>> the flag for exporting symbols is not set." )
+  message(FATAL_ERROR "For compiler <<Intel>> the flag for exporting symbols is not set.")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-  message(FATAL_ERROR "For compiler <<MSVC>> the flag for exporting symbols is not set." )
+  message(FATAL_ERROR "<<MSVC>> is not supported due to C2057.")
 endif()
 
 #DOCUMENTATION
