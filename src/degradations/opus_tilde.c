@@ -11,7 +11,7 @@ Parameters:
 
 Inlets:
   1x Audio inlet
-  also bang: lose next frame (not implemented)
+  also bang: lose next frame
 
 Outlets:
   1x Audio outlet
