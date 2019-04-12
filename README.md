@@ -1,6 +1,8 @@
 TheTelephone
 ===
 
+![TheTelephone-logo](TheTelephone-logo.svg)
+
 Extending [PureData](https://puredata.info/) to build a _telephone simulator_.
 
 This includes:
