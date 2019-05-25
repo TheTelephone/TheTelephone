@@ -3,7 +3,7 @@ TheTelephone
 
 ![TheTelephone-logo](TheTelephone-logo.svg)
 
-Extending [PureData](https://puredata.info/) to build a _telephone simulator_.
+TheTelephone provides components for [PureData](https://puredata.info/) to simulate speech telephony-related degradations.
 
 This includes:
 
@@ -16,6 +16,11 @@ Moreover, [PureData](https://puredata.info/) is extended with the following feat
 * the capability of _offline processing_ (synchronous read and write),
 * the communication via [Websockets](https://en.wikipedia.org/wiki/WebSocket), and
 * a dynamic convolver (e.g., for binaural synthesis).
+
+Actually, TheTelephone was implemented to build a _software-based telephone simulator_ for laboratory experiments on [Quality of Experience](https://en.wikipedia.org/wiki/Quality_of_experience).
+For these experiments TheTelephone (simulating telephone connections) and [TheFragebogen](http://thefragebogen.de) (presenting questionnaires and coordinate the experiment) were used together.
+For a detailed description of the used setup see [_Guse et al.:_ Multi-episodic perceived quality for one session of consecutive usage episodes with a speech telephony service
+](https://doi.org/10.1007/s41233-017-0008-3)).
 
 Build procedure
 ---
